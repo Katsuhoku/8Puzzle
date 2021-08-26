@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Test",
+            "request": "launch",
+            "mainClass": "Test",
+            "projectName": "8Puzzle_477ae601"
+        },
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch Eight Puzzle",
+            "request": "launch",
+            "mainClass": "EightPuzzle.src.App",
+            "projectName": "8Puzzle_477ae601",
+            //"args": "/Users/esielkar/Desktop/EightPuzzle_In.txt /Users/esielkar/Desktop/EightPuzzle_Out.txt"
+            "args": "/EightPuzzle/resources/EightPuzzle_In.txt /EightPuzzle/resources/EightPuzzle_Out.txt"
+        }
+    ]
+}

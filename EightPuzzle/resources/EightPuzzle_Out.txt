@@ -1,0 +1,28 @@
+#: 0
+Evaluation: 3
+Movement: None
+1	2	3	
+-	5	6	
+4	7	8	
+
+#: 1
+Evaluation: 2
+Movement: Down
+1	2	3	
+4	5	6	
+-	7	8	
+
+#: 2
+Evaluation: 1
+Movement: Right
+1	2	3	
+4	5	6	
+7	-	8	
+
+#: 3
+Evaluation: 0
+Movement: Right
+1	2	3	
+4	5	6	
+7	8	-	
+
