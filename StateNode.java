@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Random;
+
 /**
  * Nodo del "Árbol" de estados. Almacena el estado del tablero en una matriz
  * y la posición de la ficha vacía en un arreglo (x,y).
@@ -43,11 +46,6 @@ public class StateNode {
     private int[] pos;
 
     /**
-     * Distancia de Manhattan total.
-     */
-    private int distance;
-
-    /**
      * Constructor con posición de la ficha vacía.
      * @param state Estado a almacenar.
      * @param pos Posición de la ficha vacía.
@@ -55,7 +53,6 @@ public class StateNode {
     public StateNode(int[][] state, int[] pos) {
         this.state = state;
         this.pos = pos;
-        distance = this.manhattan();
     }
 
     /**
@@ -73,8 +70,6 @@ public class StateNode {
                     pos[0] = i;
                     pos[1] = j;
                 }
-
-        distance = this.manhattan();
     }
 
     /**
@@ -139,6 +134,19 @@ public class StateNode {
         return total;
     }
 
+    private int misplacedTiles() {
+        int total = 0;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (this.state[i][j] != 0) {
+                    total += i == SOLVED[state[i][j] - 1][0] && j == SOLVED[state[i][j] - 1][1] ? 0 : 1;
+                }
+            }
+        }
+
+        return total;
+    }
+
     /**
      * Genera todos los nodos hijos posibles para este nodo y busca aquel que
      * tenga la menor distancia de Manhattan.
@@ -148,29 +156,33 @@ public class StateNode {
      * nodo actual, o null en caso contrario.
      */
     public StateNode getBestChild() {
-        StateNode best = null;
+        ArrayList<StateNode> best = new ArrayList<>();
         char[] dir = {'r', 'u', 'l', 'd'};
 
         for (char d : dir) {
             StateNode aux = this.genChild(d);
             if (aux != null) {
-                if (aux.distance < this.distance) {
-                    best = aux;
+                if (aux.evaluate() < this.evaluate()) {
+                    best.add(aux);
                 }
-                else if (aux.distance == this.distance) 
-                {
-                    best = aux;
+                else if (aux.evaluate() == this.evaluate()) {
+                    best.add(aux);
                 }
             }
         }
 
-        return best;
+        Random rand = new Random();
+        return best.size() == 0 ? null : best.get(rand.nextInt(best.size()));
+    }
+
+    private int evaluate() {
+        return (int)(0.7 * this.manhattan() + 0.3 * this.misplacedTiles());
     }
 
     //  UTILITES
 
-    public int getDistance() {
-        return this.distance;
+    public int getEvaluation() {
+        return this.evaluate();
     }
 
     @Override
