@@ -1,36 +1,20 @@
 import java.io.*;
+import java.util.Queue;
 
 public class Test {
     public static final String filename = "./input.txt";
+    public static final String outfile = "./output.txt";
     public static void main(String[] args) throws Exception {
         PuzzleStateNode root = readFile();
-        System.out.println(root);
-        System.out.println(root.getEvaluation());
-        
-        /* Estado de prueba
-        int[][] state = {
-            {5, 1, 3},
-            {8, 4, 2},
-            {0, 7, 6}
-        };
 
-        StateNode node = new StateNode(state);
-        System.out.println(node);
-        System.out.println("Evaluation: " + node.getEvaluation());
+        Queue<PuzzleStateNode> solutionSequence = PuzzleRules.findSequence(root, 10);
 
-        // Genera los mejores nuevos hijos hasta que se encuentre
-        // la solución o hasta llegar a un mínimo local
-        for (int i = 0; i < 20 && node.getEvaluation() > 0; i++) {
-            node = node.getBestChild();
-            if (node != null) {
-                System.out.println(node);
-                System.out.println("Evaluation: " + node.getEvaluation());
-            }
-            else {
-                System.out.println("Finnished");
-                break;
-            }
-        }*/
+        PuzzleStateNode aux = null;
+        String sequence = "";
+        while ((aux = solutionSequence.poll()) != null) {
+            sequence += aux.getPreviousMovement() + ",";
+        }
+        writeFile(sequence);
     }
 
     private static PuzzleStateNode readFile() throws Exception {
@@ -75,5 +59,11 @@ public class Test {
         br.close();
 
         return new PuzzleStateNode(initialState);
+    }
+
+    public static void writeFile(String output) throws Exception {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outfile)));
+        bw.write(output.substring(0, output.length() - 1));
+        bw.close();
     }
 }

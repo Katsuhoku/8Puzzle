@@ -66,6 +66,15 @@ public class PuzzleStateNode {
         this.previousMovement = movement;
     }
 
+    /**
+     * Generador de nodos hijo. Genera el nodo para el movimiento solicitado en
+     * el parámetro.
+     * El movimiento es de tipo caracter, especificado en PuzzleRules.
+     * @param dir Dirección del movimiento para generar el nodo hijo (PuzzleRules).
+     * @return El nodo generado del movimiento, si es que el movimiento fue válido
+     * (es decir, la pieza blanca no sale de los límites del tablero), o null en caso
+     * contrario.
+     */
     public PuzzleStateNode genChild(char dir) {
         int[] newBlankTile = this.blankTile.clone();
 
@@ -98,6 +107,12 @@ public class PuzzleStateNode {
         else return null;
     }
 
+    /**
+     * Calcula la suma de las distancias de Manhattan de cada ficha desde
+     * su posición en el estado actual hacia su posición en el estado resuelto.
+     * Nota: Normalizar
+     * @return La suma de las distancias de Manhattan (normalizada)
+     */
     private int manhattan() {
         int total = 0;
         for (int i = 0; i < PuzzleRules.boardSize; i++) {
@@ -111,6 +126,11 @@ public class PuzzleStateNode {
         return total;
     }
 
+    /**
+     * Calcula el número total de fichas fuera de su posición en el estado resuelto.
+     * Nota: Normalizar
+     * @return El total de fichas colocadas incorrectamente (normalizada)
+     */
     private int misplacedTiles() {
         int total = 0;
         for (int i = 0; i < PuzzleRules.boardSize; i++) {
@@ -124,6 +144,15 @@ public class PuzzleStateNode {
         return total;
     }
 
+    /**
+     * Calcula el total de Inversos de Permutaciones en el tablero visto como
+     * un vector. El vector se forma de unir secuencialmente las filas de la
+     * matriz del tablero una detrás de otra.
+     * Un inverso de una permutación es una pareja de números x,y dentro de la
+     * permutación, x > y, tales que x se encuentra en alguna posición a la izquierda
+     * de y.
+     * @return El total de inversos de permutaciones para cada ficha del tablero.
+     */
     private int permutationInversions() {
         int total = 0;
 
@@ -167,10 +196,18 @@ public class PuzzleStateNode {
         return total;
     }
 
+    /**
+     * Evalua el estado actual según las funciones heurísticas.
+     * @return El valor final de la evaluación
+     */
     private int evaluate() {
         return 1 * this.manhattan() + 1 * this.misplacedTiles() + 1 * this.permutationInversions();
     }
 
+
+    // Utilities
+
+    
     public int getEvaluation() {
         return evaluation;
     }
