@@ -75,8 +75,6 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
         double h2Total = 0;
         int h3Total = 0;
         int h4Total = 0;
-        //int h4_1Total = 0;
-        //int h4_2Total = 0;
 
         int[] blankPiece = node.getPositionOf(0);
         for (int i = 0 ; i < size ; i++)
@@ -112,21 +110,6 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
                         if (j != gpp[1]) h4Total++; //Out of column
                     } 
                 }
-        /*System.out.println();
-        System.out.println("h3 total: " + h3Total);
-        System.out.println("Out of row total: " + h4_1Total);
-        System.out.println("Out of column total: "  + h4_2Total);
-        h4Total = h4_1Total + h4_2Total;
-        System.out.println("h4 total: " + h4Total);*/
-        
-         /*System.out.println("Manhattan: " + mTotal + " Norm: " + mTotal / 24 + " Weight: " + 0.4 * mTotal / 24.0);
-         System.out.println("Euclides: " + eTotal + " Norm: " + eTotal / 8.4 + " Weight: " + 0.3 * eTotal / 8.4);
-         System.out.println("Incorrectas: " + wTotal + " Norm: " + wTotal / 8.0 + " Weight: " + 0.2 * wTotal / 8.0);
-         System.out.println("Correctas: " + cTotal + " Norm: " + cTotal / 8.0 + " Weight: " + 0.1 * cTotal / 8.0);
-         System.out.println();*/
-
         return (0.4 * h1Total / 24.0) + (0.2 * h2Total / 8.4 ) + (0.1 * h3Total / 8.0) + (0.2 * h4Total / 16.0);
-        //return (0.4 * mTotal / 24.0) + (0.3 * eTotal / 8.4 ) + (0.2 * wTotal / 8.0);
-        //return (mTotal / 24.0) + (eTotal / 8.4 ) + (wTotal / 8.0);
     }
 }
