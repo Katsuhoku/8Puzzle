@@ -64,6 +64,7 @@ public class App {
                 pw.println("#: " + i);
                 pw.println(route[i].toString());
             } else {
+                if (i == 0) continue;
                 pw.print(route[i].getMovement().toChar());
                 if (i < route.length - 1)
                     pw.print(", ");
