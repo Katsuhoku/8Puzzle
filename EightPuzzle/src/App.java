@@ -25,7 +25,8 @@ public class App {
         algorithm.run();
         long endTime = System.currentTimeMillis();
         System.out.println("Execution time: " + (endTime - startTime));
-        write(args[1], algorithm.getRoute());  
+        write(args[1], algorithm.getRoute()); 
+        write(args[2], algorithm.getRoute(), true);  
     }
 
 
@@ -33,7 +34,7 @@ public class App {
         Scanner scanner;
         //scanner = new Scanner(new File(pathName));
         scanner = new Scanner(new File(System.getProperty("user.dir") + pathName));
-        size = scanner.nextInt();
+        size = scanner.nextInt(); scanner.nextLine();
         initialNode = new EightPuzzleNode(readGameBoard(scanner));
         goalNode = new EightPuzzleNode(readGameBoard(scanner));
         scanner.close();
@@ -42,27 +43,31 @@ public class App {
     private static int[][] readGameBoard(Scanner scanner) {
         int[][] gameBoard = new int[size][size];
 
-        for (int i = 0, j ; i < size ; i++){
-            j = 0;
-            while (j < size) {
-                if (scanner.hasNextInt()) {
-                    gameBoard[i][j] = scanner.nextInt();
-                    j++;
-                } else
-                    scanner.next();
-            }
+        for (int i = 0 ; i < size ; i++) {
+            var s = scanner.nextLine().split(",");
+            for (int j = 0 ; j < size ; j++)
+                gameBoard[i][j] = Integer.parseInt(s[j]);
         }
         return gameBoard;
     }
 
     private static void write(String pathName, EightPuzzleNode[] route) throws IOException{
+        write(pathName, route, false);
+    }
+
+    private static void write(String pathName, EightPuzzleNode[] route, boolean verbose) throws IOException{
         //PrintWriter pw = new PrintWriter(new FileWriter(pathName));
         PrintWriter pw = new PrintWriter(new FileWriter(System.getProperty("user.dir") + pathName));
-        int i = 0;
-        for (EightPuzzleNode node : route){
-            pw.println("#: " + i++);
-            pw.println(node.toString());
-            pw.println();
+        for (int i = 0 ; i < route.length ; i++) {
+            if (verbose) { 
+                if ( i != 0) pw.println();
+                pw.println("#: " + i);
+                pw.println(route[i].toString());
+            } else {
+                pw.print(route[i].getMovement().toChar());
+                if (i < route.length - 1)
+                    pw.print(", ");
+            }
         }
         pw.close();
     }
