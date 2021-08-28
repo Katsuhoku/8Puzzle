@@ -1,20 +1,31 @@
 package EightPuzzle.src.model;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class HillClimbingStrategy implements EightPuzzleStrategy {
     private ArrayList<EightPuzzleNode> route;
     private final EightPuzzleNode initialNode;
     private final EightPuzzleNode goalNode;
     private final int size;
-    
+
+    private NodeEvaluable evaluation = new NodeEvaluable() {
+        @Override
+        public double evaluate(EightPuzzleNode node) {
+            return HillClimbingStrategy.this.evaluate(node);
+        }
+    };
     
     public HillClimbingStrategy(EightPuzzleNode initialNode, EightPuzzleNode goalNode, int size) {
         this.initialNode = initialNode;
         this.goalNode = goalNode;
         this.size = size;
 
-        this.initialNode.evaluation = evaluate(initialNode);
-        this.goalNode.evaluation = evaluate(goalNode);
+        init(); 
+    }
+
+    private void init() {
+        this.initialNode.evaluate(evaluation);
+        this.goalNode.evaluate(evaluation);
     }
     
     @Override
@@ -25,7 +36,6 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
 
         //Paso 1: Seleccionar un nodo como nodo actual
         currentNode = initialNode;
-        currentNode.evaluation = evaluate(currentNode);
         route.add(currentNode);
 
         band = true;
@@ -35,7 +45,7 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
                 var bestChild = bestChild(generateChildren(currentNode));
                 
                 //Paso 3: Si el mejor hijo es mejor al padre, ir al paso 2
-                if (bestChild.evaluation <= currentNode.evaluation ) {
+                if (bestChild.getEvaluation() <= currentNode.getEvaluation()) {
                     route.add(bestChild);
                     currentNode = bestChild;
                 } else band = false;//En cualquier otro caso terminar
@@ -53,7 +63,7 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
 
         //Children generation
         for (var movement : EightPuzzleMovement.values()) {
-            var child = node.move(movement);
+            var child =  EightPuzzleNode.move(node, movement);
             if (child != null) children.add(child);
         }
 
@@ -61,13 +71,27 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
     }
 
     private EightPuzzleNode bestChild(EightPuzzleNode[] children) {
-        EightPuzzleNode bestChild = null;
+        ArrayList<EightPuzzleNode> bestChildren = new ArrayList<>();
+
         for (var child : children) {
-            child.evaluation = evaluate(child);
-            if (bestChild == null || bestChild.evaluation >= child.evaluation)
-                bestChild = child;
+            child.evaluate(evaluation);
+            if (bestChildren.isEmpty()) bestChildren.add(child);
+            else {
+                if (bestChildren.get(0).getEvaluation() >= child.getEvaluation()) {
+                    if (bestChildren.get(0).getEvaluation() == child.getEvaluation()) {
+                        bestChildren.add(child);
+                    } else {
+                        bestChildren.clear();
+                        bestChildren.add(child);
+                    }
+                }
+            }
         }
-        return bestChild;
+        
+        if (bestChildren.size() > 1) 
+            return bestChildren.get(new Random().nextInt(bestChildren.size()));
+
+        return bestChildren.get(0);
     }
 
     public double evaluate(EightPuzzleNode node) {
@@ -111,5 +135,6 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
                     } 
                 }
         return (0.4 * h1Total / 24.0) + (0.2 * h2Total / 8.4 ) + (0.1 * h3Total / 8.0) + (0.2 * h4Total / 16.0);
+        
     }
 }
