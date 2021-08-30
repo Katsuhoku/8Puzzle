@@ -158,8 +158,9 @@ public class PuzzleStateNode {
 
         // Obtiene la permutación (vector) correspondiente al estado resuelto
         int[] solvedPermutation = new int[(int) Math.pow(PuzzleRules.boardSize, 2)];
-        for (int i = 0, j = 0; i < solvedPermutation.length; i++, j = i/3) {
-            solvedPermutation[i] = PuzzleRules.solvedState[j][i % 3];
+        for (int i = 0, j = 0; i < solvedPermutation.length; i++, j = i/PuzzleRules.boardSize) {
+            
+            solvedPermutation[i] = PuzzleRules.solvedState[j][i % PuzzleRules.boardSize];
         }
 
         // Obtiene la permutación (vector) correspondiente al estado actual

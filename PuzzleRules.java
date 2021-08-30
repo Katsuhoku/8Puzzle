@@ -18,6 +18,8 @@ public class PuzzleRules {
 
     public static int maxCommutes;
 
+    public static double bestEvaluation;
+
     public static final char START = 's';
     public static final char RIGHT = 'r';
     public static final char UP = 'u';
@@ -98,14 +100,10 @@ public class PuzzleRules {
         nodeSequence.offer(root);
 
         for (int i = 0; i < maxIterations; i++) {
+            bestEvaluation = root.getEvaluation();
             root = getBestChild(root);
             if (root == null) break;
             nodeSequence.offer(root);
-
-            System.out.println("Tablero:");
-            System.out.println(root);
-            System.out.println("Evaluación");
-            System.out.println(root.getEvaluation());
         }
 
         return nodeSequence;

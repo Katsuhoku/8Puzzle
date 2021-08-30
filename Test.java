@@ -2,19 +2,15 @@ import java.io.*;
 import java.util.Queue;
 
 public class Test {
-    public static final String filename = "./input.txt";
-    public static final String outfile = "./output.txt";
+    public static String filename = "./input.txt";
+    public static String outfile = "./output.txt";
     public static void main(String[] args) throws Exception {
-        PuzzleStateNode root = readFile();
-        System.out.println("Max Manhattan: " + PuzzleRules.maxManhattan);
-        System.out.println("Max Misplaced: " + PuzzleRules.maxMisplaced);
-        System.out.println("Max Inversions: " + PuzzleRules.maxInversions);
-        System.out.println("Max Commutes: " + PuzzleRules.maxCommutes);
+        if (args.length == 2) {
+            filename = args[0];
+            outfile = args[1];
+        }
 
-        System.out.println("Tablero:");
-        System.out.println(root);
-        System.out.println("Evaluación");
-        System.out.println(root.getEvaluation());
+        PuzzleStateNode root = readFile();
 
         Queue<PuzzleStateNode> solutionSequence = PuzzleRules.findSequence(root, 10);
 
@@ -23,6 +19,8 @@ public class Test {
         while ((aux = solutionSequence.poll()) != null) {
             sequence += aux.getPreviousMovement() + ",";
         }
+        sequence = sequence.substring(0, sequence.length() - 1);
+        sequence += "\n" + PuzzleRules.bestEvaluation;
         writeFile(sequence);
     }
 
@@ -73,7 +71,7 @@ public class Test {
 
     public static void writeFile(String output) throws Exception {
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outfile)));
-        bw.write(output.substring(0, output.length() - 1));
+        bw.write(output);
         bw.close();
     }
 }
