@@ -24,7 +24,7 @@
             "mainClass": "EightPuzzle.src.App",
             "projectName": "8Puzzle_477ae601",
             //"args": "/Users/esielkar/Desktop/EightPuzzle_In.txt /Users/esielkar/Desktop/EightPuzzle_Out.txt"
-            "args": "/EightPuzzle/resources/EightPuzzle_In.txt /EightPuzzle/resources/EightPuzzle_Out.txt"
+            "args": "/EightPuzzle/resources/EightPuzzle_In.txt /EightPuzzle/resources/EightPuzzle_Out.txt /EightPuzzle/resources/EightPuzzle_Out_Verbose.txt"
         }
     ]
 }
