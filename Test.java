@@ -12,7 +12,7 @@ public class Test {
 
         PuzzleStateNode root = readFile();
 
-        Queue<PuzzleStateNode> solutionSequence = PuzzleRules.findSequence(root, 10);
+        Queue<PuzzleStateNode> solutionSequence = PuzzleRules.findSequence(root, 200);
 
         PuzzleStateNode aux = null;
         String sequence = "";
