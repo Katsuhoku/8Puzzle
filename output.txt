@@ -1,1 +1,1 @@
-s,u,u,l,l
+s,u,u,l,l,d,r

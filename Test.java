@@ -6,6 +6,15 @@ public class Test {
     public static final String outfile = "./output.txt";
     public static void main(String[] args) throws Exception {
         PuzzleStateNode root = readFile();
+        System.out.println("Max Manhattan: " + PuzzleRules.maxManhattan);
+        System.out.println("Max Misplaced: " + PuzzleRules.maxMisplaced);
+        System.out.println("Max Inversions: " + PuzzleRules.maxInversions);
+        System.out.println("Max Commutes: " + PuzzleRules.maxCommutes);
+
+        System.out.println("Tablero:");
+        System.out.println(root);
+        System.out.println("Evaluación");
+        System.out.println(root.getEvaluation());
 
         Queue<PuzzleStateNode> solutionSequence = PuzzleRules.findSequence(root, 10);
 
@@ -55,6 +64,7 @@ public class Test {
         }
         PuzzleRules.solvedState = solvedState;
         PuzzleRules.solvedStateCoordinates = solvedStateCoordinates;
+        PuzzleRules.prepare();
 
         br.close();
 
