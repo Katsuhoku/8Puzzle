@@ -15,6 +15,8 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
     private final double H4_MAX = 16.0;
     private final double H4_WEIGHT = 0.3;
 
+    private final int MAX_MOVEMENTS = 200;
+
     private ArrayList<EightPuzzleNode> route;
     private final EightPuzzleNode initialNode;
     private final EightPuzzleNode goalNode;
@@ -43,15 +45,13 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
     @Override
     public void run() {
         route = new ArrayList<>();
-        boolean band;
         EightPuzzleNode currentNode;
 
         //Paso 1: Seleccionar un nodo como nodo actual
         currentNode = initialNode;
         route.add(currentNode);
 
-        band = true;
-        while (band) {
+        for (int i = MAX_MOVEMENTS ; i > 0 ; i--) {
             if (!currentNode.equals(goalNode)) {
                 //Paso 2: Generar sucesores y seleccionar el mejor sucesor
                 var bestChild = bestChild(generateChildren(currentNode));
@@ -60,8 +60,8 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
                 if (bestChild.getEvaluation() <= currentNode.getEvaluation()) {
                     route.add(bestChild);
                     currentNode = bestChild;
-                } else band = false;//En cualquier otro caso terminar
-            } else band = false;
+                } else break;//En cualquier otro caso terminar
+            } else break;
         } 
     }
 

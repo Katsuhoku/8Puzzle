@@ -6,13 +6,13 @@ import java.util.Random;
 public class EightPuzzleNodeGenerator {
     private final EightPuzzleMovement[] movements;
     private final EightPuzzleNode goalNode;
-    private final int movementsCount;
+    private final int maxMovementsCount;
 
-    public EightPuzzleNodeGenerator(EightPuzzleNode goalNode, int movementsCount) throws IllegalArgumentException {
-        if (movementsCount < 1) throw new IllegalArgumentException("movementsCount cannot be lower than 1");
+    public EightPuzzleNodeGenerator(EightPuzzleNode goalNode, int maxMovementsCount) throws IllegalArgumentException {
+        if (maxMovementsCount < 1) throw new IllegalArgumentException("maxMovementsCount cannot be less than 1");
         
         this.goalNode = goalNode;
-        this.movementsCount = movementsCount;
+        this.maxMovementsCount = maxMovementsCount;
         movements = Arrays.copyOfRange(EightPuzzleMovement.values(), 1, EightPuzzleMovement.values().length);
     }
 
@@ -23,7 +23,7 @@ public class EightPuzzleNodeGenerator {
         while ((finalNode = goalNode.move(movements[random.nextInt(movements.length)])) == null);
         
         int i = 1;
-        while (i < movementsCount) {
+        while (i < maxMovementsCount) {
             EightPuzzleNode auxNode;
             if ((auxNode = finalNode.move(movements[random.nextInt(movements.length)])) != null) {
                 finalNode = auxNode;
@@ -32,4 +32,6 @@ public class EightPuzzleNodeGenerator {
         }
         return finalNode;
     }
+
+    public int getMaxMovementsCount() { return maxMovementsCount; }
 }

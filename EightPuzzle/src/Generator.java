@@ -9,17 +9,19 @@ import EightPuzzle.src.model.EightPuzzleNode;
 import EightPuzzle.src.model.EightPuzzleNodeGenerator;
 
 public class Generator {
-    private static final String pathName = "/EightPuzzle/resources/";
-    private static final String filename = "EightPuzzle_In_";
-    private static final String ext = ".txt";
+    public static final String pathName = "/EightPuzzle/resources/";
+    public static final String filename = "EightPuzzle_In_";
+    public static final String ext = ".txt";
 
 
+    //Asignación hardcodeada
     private static final int size = 3;
     private static final EightPuzzleNode goalNode = new EightPuzzleNode(new int[][] {
         {1, 2 ,3},
         {4, 5, 6},
         {7, 8, 0}
     });
+
 
     public static void main(String[] args) throws IOException {
         ArrayList<EightPuzzleNode> nodes = new ArrayList<>(15);
@@ -28,18 +30,34 @@ public class Generator {
         EightPuzzleNodeGenerator epng10 = new EightPuzzleNodeGenerator(goalNode, 10);
         EightPuzzleNodeGenerator epng15 = new EightPuzzleNodeGenerator(goalNode, 15);
         EightPuzzleNodeGenerator epng20 = new EightPuzzleNodeGenerator(goalNode, 20);
-        for (int i = 0 ; i < 5 ; i++) nodes.add(epng5.generate());
-        for (int i = 0 ; i < 5 ; i++) nodes.add(epng10.generate());
-        for (int i = 0 ; i < 5 ; i++) nodes.add(epng15.generate());
-        for (int i = 0 ; i < 5 ; i++) nodes.add(epng20.generate());
+        
+        generate(nodes, epng5);
+        generate(nodes, epng10);
+        generate(nodes, epng15);
+        generate(nodes, epng20);
         
         for (int i = 1 ; i <= nodes.size() ; i++) write(nodes.get(i - 1), i);
     }
 
-    public static void write(EightPuzzleNode node, int number) throws IOException{
+    private static void generate(ArrayList<EightPuzzleNode> nodes, EightPuzzleNodeGenerator generator) {
+        for (int i = 0, j = 5 ; i < generator.getMaxMovementsCount() && j > 0; ) {
+            EightPuzzleNode newNode = generator.generate();
+            if (!nodes.contains(newNode)){
+                nodes.add(newNode);
+                i++;
+            } else j--;
+        }
+    }
+
+    private static void write(EightPuzzleNode node, int number) throws IOException{
         PrintWriter pw = new PrintWriter(new FileWriter(System.getProperty("user.dir") + pathName + filename + number + ext));
         pw.println(size);
-        
+        writeGameboard(node, pw);
+        writeGameboard(goalNode, pw); //Goal gameboard
+        pw.close();
+    }
+
+    private static void writeGameboard(EightPuzzleNode node, PrintWriter pw) {
         for (int x = 0 ; x < size ; x++) {
             for (int y = 0 ; y < size ; y++) {
                 pw.print(node.getPieceOf(x, y));
@@ -47,17 +65,5 @@ public class Generator {
             }
             pw.println();
         }
-
-        //Goal
-        for (int x = 0 ; x < size ; x++) {
-            for (int y = 0 ; y < size ; y++) {
-                pw.print(goalNode.getPieceOf(x, y));
-                if (y < size - 1) pw.write(',');
-            }
-            pw.println();
-        }
-        pw.close();
-
-    }
-    
+    }  
 }
