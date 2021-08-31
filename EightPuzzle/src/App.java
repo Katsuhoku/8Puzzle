@@ -15,10 +15,11 @@ public class App {
     private static int size;
     private static EightPuzzleNode initialNode;
     private static EightPuzzleNode goalNode;
+    private static String ext = ".txt"; 
 
     public static void main(String[] args) throws Exception {
         //var r = new EightPuzzleReader(args[0]);
-        read(args[0]);
+        /*read(args[0]);
         EightPuzzleStrategy algorithm = new HillClimbingStrategy(initialNode, goalNode, size);
         
         long startTime = System.currentTimeMillis(); 
@@ -26,7 +27,18 @@ public class App {
         long endTime = System.currentTimeMillis();
         System.out.println("Execution time: " + (endTime - startTime));
         write(args[1], algorithm.getRoute()); 
-        write(args[2], algorithm.getRoute(), true);  
+        write(args[2], algorithm.getRoute(), true);*/
+
+        for (int i = 1 ; i <= 20 ; i++) {
+            read(args[0] + i + ext);
+            EightPuzzleStrategy algorithm = new HillClimbingStrategy(initialNode, goalNode, size);
+            long startTime = System.currentTimeMillis(); 
+            algorithm.run();
+            long endTime = System.currentTimeMillis();
+            System.out.println("Execution time: " + (endTime - startTime));
+            write(args[1] + i + ext, algorithm.getRoute()); 
+            write(args[2] + i + ext, algorithm.getRoute(), true);
+        }   
     }
 
 
