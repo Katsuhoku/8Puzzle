@@ -27,7 +27,7 @@ public class PuzzleStateNode {
     /**
      * Evaluación del tablero según la función de evaluación.
      */
-    private int evaluation;
+    private double evaluation;
 
     /**
      * Movimiento a partir del cual se generó desde el estado anterior.
@@ -113,8 +113,8 @@ public class PuzzleStateNode {
      * Nota: Normalizar
      * @return La suma de las distancias de Manhattan (normalizada)
      */
-    private int manhattan() {
-        int total = 0;
+    private double manhattan() {
+        double total = 0;
         for (int i = 0; i < PuzzleRules.boardSize; i++) {
             for (int j = 0; j < PuzzleRules.boardSize; j++) {
                 if (state[i][j] != 0) {
@@ -123,7 +123,7 @@ public class PuzzleStateNode {
             }
         }
 
-        return total;
+        return total / PuzzleRules.maxManhattan;
     }
 
     /**
@@ -131,8 +131,8 @@ public class PuzzleStateNode {
      * Nota: Normalizar
      * @return El total de fichas colocadas incorrectamente (normalizada)
      */
-    private int misplacedTiles() {
-        int total = 0;
+    private double misplacedTiles() {
+        double total = 0;
         for (int i = 0; i < PuzzleRules.boardSize; i++) {
             for (int j = 0; j < PuzzleRules.boardSize; j++) {
                 if (state[i][j] != 0) {
@@ -141,7 +141,7 @@ public class PuzzleStateNode {
             }
         }
 
-        return total;
+        return total / PuzzleRules.maxMisplaced;
     }
 
     /**
@@ -153,13 +153,14 @@ public class PuzzleStateNode {
      * de y.
      * @return El total de inversos de permutaciones para cada ficha del tablero.
      */
-    private int permutationInversions() {
-        int total = 0;
+    private double permutationInversions() {
+        double total = 0;
 
         // Obtiene la permutación (vector) correspondiente al estado resuelto
         int[] solvedPermutation = new int[(int) Math.pow(PuzzleRules.boardSize, 2)];
-        for (int i = 0, j = 0; i < solvedPermutation.length; i++, j = i/3) {
-            solvedPermutation[i] = PuzzleRules.solvedState[j][i % 3];
+        for (int i = 0, j = 0; i < solvedPermutation.length; i++, j = i/PuzzleRules.boardSize) {
+            
+            solvedPermutation[i] = PuzzleRules.solvedState[j][i % PuzzleRules.boardSize];
         }
 
         // Obtiene la permutación (vector) correspondiente al estado actual
@@ -189,26 +190,60 @@ public class PuzzleStateNode {
             for (int j = i + 1; j < normalizedStatePermutation.length; j++) {
                 // Recorre el arreglo desde el elemento i hasta el último elemento
                 // Obtiene la cantidad de valores menores que el elemento i a su derecha
-                if (normalizedStatePermutation[j] < normalizedStatePermutation[i]) total++;
+                if (normalizedStatePermutation[j] != 0 && normalizedStatePermutation[j] < normalizedStatePermutation[i]) total++;
             }
         }
 
-        return total;
+        return total / PuzzleRules.maxInversions;
+    }
+
+    private double commutedColumns() {
+        double total = 0;
+
+        for (int i = 0; i < PuzzleRules.boardSize; i++) {
+            for (int j = 0; j < PuzzleRules.boardSize; j++) {
+                if (state[i][j] != 0) {
+                    total += Math.abs((j - PuzzleRules.solvedStateCoordinates[state[i][j]][1]));
+                }
+            }
+        }
+
+        return total / PuzzleRules.maxCommutes;
+    }
+
+    private double commutedRows() {
+        double total = 0;
+
+        for (int i = 0; i < PuzzleRules.boardSize; i++) {
+            for (int j = 0; j < PuzzleRules.boardSize; j++) {
+                if (state[i][j] != 0) {
+                    total += Math.abs((i - PuzzleRules.solvedStateCoordinates[state[i][j]][0]));
+                }
+            }
+        }
+
+        return total / PuzzleRules.maxCommutes;
     }
 
     /**
      * Evalua el estado actual según las funciones heurísticas.
      * @return El valor final de la evaluación
      */
-    private int evaluate() {
-        return 1 * this.manhattan() + 1 * this.misplacedTiles() + 1 * this.permutationInversions();
+    private double evaluate() {
+        return
+            0.1 * this.manhattan() +
+            0.4 * this.misplacedTiles() +
+            0.3 * this.permutationInversions() +
+            0.05 * this.commutedColumns() +
+            0.05 * this.commutedRows()
+        ;
     }
 
 
     // Utilities
 
     
-    public int getEvaluation() {
+    public double getEvaluation() {
         return evaluation;
     }
 

@@ -2,18 +2,25 @@ import java.io.*;
 import java.util.Queue;
 
 public class Test {
-    public static final String filename = "./input.txt";
-    public static final String outfile = "./output.txt";
+    public static String filename = "./input.txt";
+    public static String outfile = "./output.txt";
     public static void main(String[] args) throws Exception {
+        if (args.length == 2) {
+            filename = args[0];
+            outfile = args[1];
+        }
+
         PuzzleStateNode root = readFile();
 
-        Queue<PuzzleStateNode> solutionSequence = PuzzleRules.findSequence(root, 10);
+        Queue<PuzzleStateNode> solutionSequence = PuzzleRules.findSequence(root, 200);
 
         PuzzleStateNode aux = null;
         String sequence = "";
         while ((aux = solutionSequence.poll()) != null) {
             sequence += aux.getPreviousMovement() + ",";
         }
+        sequence = sequence.substring(0, sequence.length() - 1);
+        sequence += "\n" + PuzzleRules.bestEvaluation;
         writeFile(sequence);
     }
 
@@ -55,6 +62,7 @@ public class Test {
         }
         PuzzleRules.solvedState = solvedState;
         PuzzleRules.solvedStateCoordinates = solvedStateCoordinates;
+        PuzzleRules.prepare();
 
         br.close();
 
@@ -63,7 +71,7 @@ public class Test {
 
     public static void writeFile(String output) throws Exception {
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outfile)));
-        bw.write(output.substring(0, output.length() - 1));
+        bw.write(output);
         bw.close();
     }
 }
