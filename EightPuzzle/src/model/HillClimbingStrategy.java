@@ -3,6 +3,20 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class HillClimbingStrategy implements EightPuzzleStrategy {
+    private final double H1_MAX = 24.0;
+    private final double H1_WEIGHT = 0.4;
+
+    private final double H2_MAX = 12 * Math.sqrt(2);
+    private final double H2_WEIGHT = 0.2;
+
+    private final double H3_MAX = 8.0;
+    private final double H3_WEIGHT = 0.1;
+
+    private final double H4_MAX = 16.0;
+    private final double H4_WEIGHT = 0.3;
+
+    private final int MAX_MOVEMENTS = 200;
+
     private ArrayList<EightPuzzleNode> route;
     private final EightPuzzleNode initialNode;
     private final EightPuzzleNode goalNode;
@@ -31,15 +45,13 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
     @Override
     public void run() {
         route = new ArrayList<>();
-        boolean band;
         EightPuzzleNode currentNode;
 
         //Paso 1: Seleccionar un nodo como nodo actual
         currentNode = initialNode;
         route.add(currentNode);
 
-        band = true;
-        while (band) {
+        for (int i = MAX_MOVEMENTS ; i > 0 ; i--) {
             if (!currentNode.equals(goalNode)) {
                 //Paso 2: Generar sucesores y seleccionar el mejor sucesor
                 var bestChild = bestChild(generateChildren(currentNode));
@@ -48,8 +60,8 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
                 if (bestChild.getEvaluation() <= currentNode.getEvaluation()) {
                     route.add(bestChild);
                     currentNode = bestChild;
-                } else band = false;//En cualquier otro caso terminar
-            } else band = false;
+                } else break;//En cualquier otro caso terminar
+            } else break;
         } 
     }
 
@@ -119,14 +131,6 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
                         gpp //Goal piece position
                     );
 
-                    /*//Incorrect pieces
-                    if (piece != goalNode.getPieceOf(i, j))  h3Total++; //First way
-                    //if (!(i == gpp[0] && j == gpp[1])) h3Total++; //Second way
-
-                    //Pieces out of row + pieces out of column
-                    if (i != gpp[0]) h4_1Total++; //Out of row
-                    if (j != gpp[1]) h4_2Total++; //Out of column*/
-
                     //Incorrect pieces and Pieces out of row + pieces out of column
                     if (!(i == gpp[0] && j == gpp[1])) {
                         h3Total++;
@@ -134,7 +138,9 @@ public class HillClimbingStrategy implements EightPuzzleStrategy {
                         if (j != gpp[1]) h4Total++; //Out of column
                     } 
                 }
-        return (0.4 * h1Total / 24.0) + (0.2 * h2Total / 8.4 ) + (0.1 * h3Total / 8.0) + (0.2 * h4Total / 16.0);
-        
+        return (H1_WEIGHT * h1Total / H1_MAX) + 
+                (H2_WEIGHT * h2Total / H2_MAX ) + 
+                (H3_WEIGHT * h3Total / H3_MAX) + 
+                (H4_WEIGHT * h4Total / H4_MAX);
     }
 }
