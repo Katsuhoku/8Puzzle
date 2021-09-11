@@ -1,3 +1,4 @@
+package src;
 import java.util.ArrayList;
 
 /**
@@ -232,7 +233,7 @@ public class PuzzleStateNode {
     private double evaluate() {
         return
             0.1 * this.manhattan() +
-            0.4 * this.misplacedTiles() +
+            0.5 * this.misplacedTiles() +
             0.3 * this.permutationInversions() +
             0.05 * this.commutedColumns() +
             0.05 * this.commutedRows()

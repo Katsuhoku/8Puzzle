@@ -1,18 +1,29 @@
+package src;
 import java.io.*;
 import java.util.Queue;
 
-public class Test {
-    public static String filename = "./input.txt";
-    public static String outfile = "./output.txt";
+public class Main {
+    public static String filename = "../input.txt";
+    public static String outfile = "../output.txt";
+    public static String strategy = "hill";
     public static void main(String[] args) throws Exception {
-        if (args.length == 2) {
+        if (args.length > 0 && args.length < 3 || args[2] != "hill" || args[2] != "a*") {
+            System.out.println("Usage: java -cp class src.Main <input file> <output file> <strategy>");
+            System.out.println("Where:");
+            System.out.println("Strategy - [\"hill\", \"a*\"]");
+        }
+
+        if (args.length >= 3) {
             filename = args[0];
             outfile = args[1];
+            strategy = args[2];
         }
 
         PuzzleStateNode root = readFile();
 
-        Queue<PuzzleStateNode> solutionSequence = PuzzleRules.findSequence(root, 200);
+        Queue<PuzzleStateNode> solutionSequence;
+        if (strategy == "hill") solutionSequence = HillClimbingStrategy.findSequence(root, 200);
+        else solutionSequence = AStarStrategy.findSequence(root);
 
         PuzzleStateNode aux = null;
         String sequence = "";
@@ -20,7 +31,7 @@ public class Test {
             sequence += aux.getPreviousMovement() + ",";
         }
         sequence = sequence.substring(0, sequence.length() - 1);
-        sequence += "\n" + PuzzleRules.bestEvaluation;
+        sequence += "\n" + HillClimbingStrategy.bestEvaluation;
         writeFile(sequence);
     }
 
