@@ -1,11 +1,12 @@
 from random import shuffle, randint
 from math import pow
 
-size = 4
+size = 6
 p = [
     [3,5,10,15,20],
     [5,10,15,25,40],
-    [10,17,25,40,60]
+    [10,17,25,40,60],
+    [10,20,30,40,60]
 ]
 
 def genChild(direc, perm, blank):
@@ -57,7 +58,7 @@ for i in range(100):
         blank = pair[1]
 
     
-    with open(f'./{size}x{size}/input{i}.txt', 'w') as f:
+    with open(f'../{size}x{size}/input{i}.txt', 'w') as f:
         f.write(f'{size}\n')
         for k in range(int(pow(size, 2))):
             f.write(f'{perm[int(k/size)][k%size]}')

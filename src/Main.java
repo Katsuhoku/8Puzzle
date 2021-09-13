@@ -25,14 +25,22 @@ public class Main {
         if (strategy == "hill") solutionSequence = HillClimbingStrategy.findSequence(root, 200);
         else solutionSequence = AStarStrategy.findSequence(root);
 
-        PuzzleStateNode aux = null;
-        String sequence = "";
-        while ((aux = solutionSequence.poll()) != null) {
-            sequence += aux.getPreviousMovement() + ",";
+        if (solutionSequence.size() == 1) {
+            writeFile("-\n" + root.getEvaluation());
         }
-        sequence = sequence.substring(0, sequence.length() - 1);
-        sequence += "\n" + HillClimbingStrategy.bestEvaluation;
-        writeFile(sequence);
+        else {
+            PuzzleStateNode aux = null;
+            String sequence = "";
+            while ((aux = solutionSequence.poll()) != null) {
+                sequence += aux.getPreviousMovement() + ",";
+            }
+            sequence = sequence.substring(2, sequence.length() - 1);
+
+            System.out.println(sequence);
+            
+            sequence += "\n" + HillClimbingStrategy.bestEvaluation;
+            writeFile(sequence);
+        }
     }
 
     private static PuzzleStateNode readFile() throws Exception {

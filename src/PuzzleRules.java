@@ -32,11 +32,11 @@ public class PuzzleRules {
      */
     public static int maxCommutes;
 
-    public static final char START = 's';
-    public static final char RIGHT = 'r';
-    public static final char UP = 'u';
-    public static final char LEFT = 'l';
-    public static final char DOWN = 'd';
+    public static final char START = 'S';
+    public static final char RIGHT = 'R';
+    public static final char UP = 'U';
+    public static final char LEFT = 'L';
+    public static final char DOWN = 'D';
 
     /**
      * Estado resuelto representado análogamente al tablero como una matriz.
