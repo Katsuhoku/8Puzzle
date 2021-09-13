@@ -1,8 +1,16 @@
 begin a*_for_npuzzle
+    Root <- initial state readed from file
+
     open <- [Root] // tree leaves
     closed <- [] // already expanded nodes
     while open <> [] do
         X <- board with best evaluation from open
+
+        if max deep was reached then
+            open <- [X]
+            closed <- []
+        end if
+        
         if X is the goard state
             return path from Start to X
         else
