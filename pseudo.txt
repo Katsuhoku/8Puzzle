@@ -3,36 +3,59 @@ begin a*_for_npuzzle
 
     open <- [Root] // tree leaves
     closed <- [] // already expanded nodes
-    while open <> [] do
-        X <- board with best evaluation from open
+    limit <- [] // nodes in the deepest limit level
 
-        if max deep was reached then
-            open <- [X]
-            closed <- []
-        end if
-        
-        if X is the goard state
-            return path from Start to X
-        else
-            children <- children of X
-            for each child in children do
-                if the child is not in open nor in closed then
-                    evaluate child
-                    add child to open at its corresponding place // insertion sort
-                else if child was already in open then
-                    if this is a shorter path to the child then // (i.e. is a better evaluation)
-                        update child evaluation
-                        update child father node as X
-                else // the child is in closed
-                    if this is a shorter path to the child
-                        move child node from close to open
-                        update evaluations of every node in the subtree of the child (included the child)
+    while limit <> [] do
+        while open <> [] do
+            X <- board with best evaluation from open
+
+            if X si in the deepest limit level then
+                add X to limit
+            else
+                if X is the goard state
+                    return path from Start to X
+                else
+                    children <- children of X
+                    for each child in children do
+                        if the child is not in open nor in closed nor in limit then
+                            evaluate child
+                            add child to open at its corresponding place // insertion sort
+                        else if child was already in open then
+                            if this is a shorter path to the child then // (i.e. is a better evaluation)
+                                update child evaluation
+                                update child father node as X
+                            end if
+                        else if child was already in closed then
+                            if this is a shorter path to the child
+                                move child node from close to open
+                                update evaluations of every node in the subtree of the child (included the child)
+                                update child father node as X
+                            end if
+                        else // child was already in limit then
+                            if this is a shorter path to the child
+                                move child node from limit to open
+                                update child evaluation
+                                update chid father node as X
+                            end if
+                        end if
+                    
+                    add X to closed
                 end if
-            
-            add X to closed
+            end if
+        end while
+
+        // at some point, every leaf in the tree will be a limit node
+        // then open gets empty and the algorithm starts again giving
+        // the best node in limit as the new root
+        if limit <> [] then
+            newRoot <- board with best evaluation from limit
+            open <- [newRoot]
+            closed <- []
         end if
     end while
 
+    // if the solution couldn't be found and there's no more tree to
+    // explore then its a fail
     return FAIL
 end a*_for_npuzzle
 

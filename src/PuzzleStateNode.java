@@ -35,7 +35,21 @@ public class PuzzleStateNode {
      */
     private char previousMovement;
 
+    /**
+     * Padre de este nodo en el árbol de búsqueda.
+     * El padre no es estático, puede variar dependiendo si el
+     * algoritmo a* encuentra un mejor camino hacia este estado.
+     */
     private PuzzleStateNode father;
+
+    /**
+     * Hijos de este nodo en el árbol de búsqueda.
+     * Los hijos almacenados no son todos los que este nodo puede generar,
+     * sino los que se encuentran asociados a este nodo en un
+     * momento determinado del algoritmo. Esto evitando que se repitan
+     * estados.
+     */
+    private ArrayList<PuzzleStateNode> currentChildren;
 
     /**
      * Constructor inicial. La posición de la ficha vacía se busca al construir el nodo.
