@@ -35,6 +35,8 @@ public class PuzzleStateNode {
      */
     private char previousMovement;
 
+    private PuzzleStateNode father;
+
     /**
      * Constructor inicial. La posición de la ficha vacía se busca al construir el nodo.
      * Se evalúa el nodo al construirlo.
@@ -54,6 +56,7 @@ public class PuzzleStateNode {
 
         this.evaluation = evaluate();
         this.previousMovement = PuzzleRules.START;
+        this.father = null;
     }
 
     /**
@@ -65,6 +68,12 @@ public class PuzzleStateNode {
     private PuzzleStateNode(int[][] state, char movement) {
         this(state);
         this.previousMovement = movement;
+    }
+
+    private PuzzleStateNode(int[][] state, char movement, PuzzleStateNode father) {
+        this(state);
+        this.previousMovement = movement;
+        this.father = father;
     }
 
     /**
