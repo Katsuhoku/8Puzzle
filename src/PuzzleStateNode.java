@@ -16,6 +16,11 @@ import java.util.ArrayList;
 
 public class PuzzleStateNode {
     /**
+     * Nivel del árbol en el que se encuentra este nodo
+     */
+    private int level;
+
+    /**
      * Estado del tablero
      */
     private int[][] state;
@@ -71,6 +76,7 @@ public class PuzzleStateNode {
         this.evaluation = evaluate();
         this.previousMovement = PuzzleRules.START;
         this.father = null;
+        this.level = 0;
     }
 
     /**
@@ -84,10 +90,11 @@ public class PuzzleStateNode {
         this.previousMovement = movement;
     }
 
-    private PuzzleStateNode(int[][] state, char movement, PuzzleStateNode father) {
+    private PuzzleStateNode(int[][] state, char movement, PuzzleStateNode father, int level) {
         this(state);
         this.previousMovement = movement;
         this.father = father;
+        this.level = level;
     }
 
     /**
@@ -126,7 +133,7 @@ public class PuzzleStateNode {
             newBlankTile[1] >= 0 && newBlankTile[1] < PuzzleRules.boardSize) {
             newState[this.blankTile[0]][this.blankTile[1]] = newState[newBlankTile[0]][newBlankTile[1]];
             newState[newBlankTile[0]][newBlankTile[1]] = 0;
-            return new PuzzleStateNode(newState, dir);
+            return new PuzzleStateNode(newState, dir, this, this.level + 1);
         }
         else return null;
     }
@@ -266,6 +273,17 @@ public class PuzzleStateNode {
 
     // Utilities
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setFather(PuzzleStateNode father) {
+        this.father = father;
+    }
+
+    public void setCurrentChildren(ArrayList<PuzzleStateNode> children) {
+        currentChildren = children;
+    }
     
     public double getEvaluation() {
         return evaluation;
@@ -273,6 +291,18 @@ public class PuzzleStateNode {
 
     public char getPreviousMovement() {
         return previousMovement;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public PuzzleStateNode getFather() {
+        return father;
+    }
+
+    public PuzzleStateNode[] getCurrentChildren() {
+        return (PuzzleStateNode[]) currentChildren.toArray();
     }
 
     @Override

@@ -7,12 +7,6 @@ public class Main {
     public static String outfile = "../output.txt";
     public static String strategy = "hill";
     public static void main(String[] args) throws Exception {
-        if (args.length > 0 && args.length < 3 || args[2] != "hill" || args[2] != "a*") {
-            System.out.println("Usage: java -cp class src.Main <input file> <output file> <strategy>");
-            System.out.println("Where:");
-            System.out.println("Strategy - [\"hill\", \"a*\"]");
-        }
-
         if (args.length >= 3) {
             filename = args[0];
             outfile = args[1];
@@ -20,6 +14,12 @@ public class Main {
         }
 
         PuzzleStateNode root = readFile();
+
+        if (strategy.equals("size_test")) {
+            PuzzleStateInstrumentation.test(root);
+            System.exit(0);
+        }
+
 
         Queue<PuzzleStateNode> solutionSequence;
         if (strategy == "hill") solutionSequence = HillClimbingStrategy.findSequence(root, 200);
