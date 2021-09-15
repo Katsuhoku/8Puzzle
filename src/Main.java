@@ -15,8 +15,14 @@ public class Main {
 
         PuzzleStateNode root = readFile();
 
+        // Test para el tamaño de los objetos en memoria
         if (strategy.equals("size_test")) {
             PuzzleStateInstrumentation.test(root);
+            System.exit(0);
+        }
+
+        if (strategy.equals("expansor")) {
+            System.out.println("Factor de ramificación promedio: " + PuzzleStateInstrumentation.expandTree(root));
             System.exit(0);
         }
 

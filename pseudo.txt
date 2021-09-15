@@ -16,7 +16,7 @@ begin a*_for_npuzzle
                     return path from Start to X
                 else
                     children <- children of X
-                    for each child in children do
+                    for each child in children do // parallel
                         if the child is not in open nor in closed nor in limit then
                             evaluate child
                             add child to open at its corresponding place // insertion sort

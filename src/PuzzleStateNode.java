@@ -139,6 +139,34 @@ public class PuzzleStateNode {
     }
 
     /**
+     * Genera todos los hijos posibles de este nodo y los retorna en un arreglo simple.
+     * No analiza por estados repetidos.
+     * @return El arreglo simple con los hijos generados.
+     */
+    public PuzzleStateNode[] genAllChildren() {
+        ArrayList<PuzzleStateNode> aux = new ArrayList<>();
+
+        for (char dir : "RULD".toCharArray()) {
+            PuzzleStateNode auxNode = this.genChild(dir);
+            if (auxNode != null) aux.add(auxNode);
+        }
+
+        return aux.toArray(new PuzzleStateNode[aux.size()]);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        PuzzleStateNode node = (PuzzleStateNode) object;
+
+        for (int i = 0; i < PuzzleRules.boardSize; i++) {
+            for (int j = 0; j < PuzzleRules.boardSize; j++) {
+                if (this.state[i][j] != node.getTile(i, j)) return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Calcula la suma de las distancias de Manhattan de cada ficha desde
      * su posición en el estado actual hacia su posición en el estado resuelto.
      * Nota: Normalizar
@@ -303,6 +331,10 @@ public class PuzzleStateNode {
 
     public PuzzleStateNode[] getCurrentChildren() {
         return (PuzzleStateNode[]) currentChildren.toArray();
+    }
+
+    public int getTile(int y, int x) {
+        return state[y][x];
     }
 
     @Override
