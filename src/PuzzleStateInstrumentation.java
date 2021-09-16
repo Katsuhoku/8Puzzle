@@ -80,11 +80,12 @@ public class PuzzleStateInstrumentation {
         return new Result(toAdd); // Hijos expandidos que sí deben ser añadidos (no se repiten)
     }
 
-    public static float expandTree(PuzzleStateNode root) throws InterruptedException, ExecutionException {
-        int depth = 14;
+    public static float expandTree(PuzzleStateNode root, int depth) throws InterruptedException, ExecutionException {
         float meanChildren = 0;
         ArrayList<PuzzleStateNode> closed = new ArrayList<>();
         ArrayList<PuzzleStateNode> currentLevel = new ArrayList<>();
+
+        System.out.println("Lv\tNodos\tMean");
         
         currentLevel.add(root);
         for (int i = 0; i < depth; i++) {
@@ -115,15 +116,18 @@ public class PuzzleStateInstrumentation {
                 exec.shutdown();
             }
 
-            System.out.println(closed.size());
-
-            meanChildren += nextLevel.size() / currentLevel.size();
-
+            
+            meanChildren += (float) nextLevel.size() / (float) currentLevel.size();
+            
             closed.addAll(currentLevel);
+
+            System.out.println(i + "\t" + closed.size() + "\t" + meanChildren);
+
             currentLevel.clear();
             currentLevel.addAll(nextLevel);
             nextLevel.clear();
             System.gc();
+
         }
 
         return meanChildren / depth;

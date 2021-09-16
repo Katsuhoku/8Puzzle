@@ -22,13 +22,19 @@ public class Main {
         }
 
         if (strategy.equals("expansor")) {
-            System.out.println("Factor de ramificación promedio: " + PuzzleStateInstrumentation.expandTree(root));
+            long startTime = System.nanoTime();
+            System.out.println("Factor de ramificación promedio: " + PuzzleStateInstrumentation.expandTree(root, Integer.parseInt(args[3])));
+            long endTime = System.nanoTime();
+
+            long totalTime = (endTime - startTime) / 1000000;
+
+            System.out.println("Tiempo de finalización: " + (totalTime / 1000) + "s");
             System.exit(0);
         }
 
 
         Queue<PuzzleStateNode> solutionSequence;
-        if (strategy == "hill") solutionSequence = HillClimbingStrategy.findSequence(root, 200);
+        if (strategy.equals("hill")) solutionSequence = HillClimbingStrategy.findSequence(root, 200);
         else solutionSequence = AStarStrategy.findSequence(root);
 
         if (solutionSequence.size() == 1) {
@@ -40,11 +46,10 @@ public class Main {
             while ((aux = solutionSequence.poll()) != null) {
                 sequence += aux.getPreviousMovement() + ",";
             }
-            sequence = sequence.substring(2, sequence.length() - 1);
 
             System.out.println(sequence);
             
-            sequence += "\n" + HillClimbingStrategy.bestEvaluation;
+            if (strategy.equals("hill")) sequence += "\n" + HillClimbingStrategy.bestEvaluation;
             writeFile(sequence);
         }
     }

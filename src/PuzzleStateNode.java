@@ -73,10 +73,11 @@ public class PuzzleStateNode {
                     this.blankTile[1] = j;
                 }
 
-        this.evaluation = evaluate();
+        this.evaluation = h();
         this.previousMovement = PuzzleRules.START;
         this.father = null;
         this.level = 0;
+        this.currentChildren = new ArrayList<>();
     }
 
     /**
@@ -95,6 +96,8 @@ public class PuzzleStateNode {
         this.previousMovement = movement;
         this.father = father;
         this.level = level;
+
+        this.evaluation = evaluate();
     }
 
     /**
@@ -158,6 +161,10 @@ public class PuzzleStateNode {
     public boolean equals(Object object) {
         PuzzleStateNode node = (PuzzleStateNode) object;
 
+        // Si el hueco está en un lugar distinto el tablero es automáticamente distinto
+        if (node.getTile(this.blankTile[0], this.blankTile[1]) != 0) return false;
+
+        // Si el hueco está en el mismo lugar, se comprueba cada una de las casillas
         for (int i = 0; i < PuzzleRules.boardSize; i++) {
             for (int j = 0; j < PuzzleRules.boardSize; j++) {
                 if (this.state[i][j] != node.getTile(i, j)) return false;
@@ -288,7 +295,7 @@ public class PuzzleStateNode {
      * Evalua el estado actual según las funciones heurísticas.
      * @return El valor final de la evaluación
      */
-    private double evaluate() {
+    private double h() {
         return
             0.1 * this.manhattan() +
             0.5 * this.misplacedTiles() +
@@ -296,6 +303,14 @@ public class PuzzleStateNode {
             0.05 * this.commutedColumns() +
             0.05 * this.commutedRows()
         ;
+    }
+
+    private double g() {
+        return (double) level / 200.0;
+    }
+
+    private double evaluate() {
+        return 0.5 * g() + 0.5 * h();
     }
 
 
@@ -311,6 +326,10 @@ public class PuzzleStateNode {
 
     public void setCurrentChildren(ArrayList<PuzzleStateNode> children) {
         currentChildren = children;
+    }
+
+    public void addChild(PuzzleStateNode child) {
+        currentChildren.add(child);
     }
     
     public double getEvaluation() {
@@ -329,8 +348,8 @@ public class PuzzleStateNode {
         return father;
     }
 
-    public PuzzleStateNode[] getCurrentChildren() {
-        return (PuzzleStateNode[]) currentChildren.toArray();
+    public ArrayList<PuzzleStateNode> getCurrentChildren() {
+        return currentChildren;
     }
 
     public int getTile(int y, int x) {

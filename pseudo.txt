@@ -5,38 +5,47 @@ begin a*_for_npuzzle
     closed <- [] // already expanded nodes
     limit <- [] // nodes in the deepest limit level
 
-    while limit <> [] do
+    while true do
         while open <> [] do
             X <- board with best evaluation from open
 
-            if X si in the deepest limit level then
-                add X to limit
+            if X is the goal state
+                return path from Start to X
             else
-                if X is the goard state
-                    return path from Start to X
+                if X si in the deepest limit level then
+                    add X to limit // insertion sort
                 else
                     children <- children of X
-                    for each child in children do // parallel
-                        if the child is not in open nor in closed nor in limit then
-                            evaluate child
-                            add child to open at its corresponding place // insertion sort
-                        else if child was already in open then
+                    for each child in children do
+                        // each node is generated sequentially, but the search of the node
+                        // in each array is made in parallel
+                        // This requires Readers-Writters implementation, priority on Writters
+                        // (If this is a duplicated state, then there's one and only one node
+                        // that has the same state. Then the other evaluations must be stopped
+                        // or canceled. The shared resource then is the flag checked by all nodes
+                        // to decide to continue or stop. Checking nodes can access to Read the
+                        // value, but the only one node who updates the value has priority to
+                        // get the resource.)
+                        if child was already in open then // parallel
                             if this is a shorter path to the child then // (i.e. is a better evaluation)
                                 update child evaluation
                                 update child father node as X
                             end if
-                        else if child was already in closed then
+                        else if child was already in closed then // parallel
                             if this is a shorter path to the child
                                 move child node from close to open
-                                update evaluations of every node in the subtree of the child (included the child)
+                                delete the subtree that child had
                                 update child father node as X
                             end if
-                        else // child was already in limit then
+                        else if child was already in limit then // parallel
                             if this is a shorter path to the child
                                 move child node from limit to open
                                 update child evaluation
                                 update chid father node as X
                             end if
+                        else // the child is not in open nor in closed nor in limit
+                            evaluate child
+                            add child to open at its corresponding place // insertion sort
                         end if
                     
                     add X to closed
@@ -51,6 +60,8 @@ begin a*_for_npuzzle
             newRoot <- board with best evaluation from limit
             open <- [newRoot]
             closed <- []
+        else
+            break;
         end if
     end while
 
