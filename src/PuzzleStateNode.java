@@ -73,7 +73,7 @@ public class PuzzleStateNode {
                     this.blankTile[1] = j;
                 }
 
-        this.evaluation = h();
+        this.evaluation = evaluate();
         this.previousMovement = PuzzleRules.START;
         this.father = null;
         this.level = 0;
@@ -295,17 +295,17 @@ public class PuzzleStateNode {
      * Evalua el estado actual según las funciones heurísticas.
      * @return El valor final de la evaluación
      */
-    private double h() {
+    public double h() {
         return
-            0.1 * this.manhattan() +
-            0.5 * this.misplacedTiles() +
-            0.3 * this.permutationInversions() +
-            0.05 * this.commutedColumns() +
-            0.05 * this.commutedRows()
+            1.0 * this.manhattan() +
+            0.0 * this.misplacedTiles() +
+            0.0 * this.permutationInversions() +
+            0.0 * this.commutedColumns() +
+            0.0 * this.commutedRows()
         ;
     }
 
-    private double g() {
+    public double g() {
         return (double) level / 200.0;
     }
 
@@ -354,6 +354,10 @@ public class PuzzleStateNode {
 
     public int getTile(int y, int x) {
         return state[y][x];
+    }
+
+    public PuzzleStateNode asRoot() {
+        return new PuzzleStateNode(this.state);
     }
 
     @Override

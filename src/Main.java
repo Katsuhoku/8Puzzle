@@ -3,9 +3,9 @@ import java.io.*;
 import java.util.Queue;
 
 public class Main {
-    public static String filename = "../input.txt";
-    public static String outfile = "../output.txt";
-    public static String strategy = "hill";
+    public static String filename = "./input.txt";
+    public static String outfile = "./output.txt";
+    public static String strategy = "a*";
     public static void main(String[] args) throws Exception {
         if (args.length >= 3) {
             filename = args[0];
@@ -34,8 +34,13 @@ public class Main {
 
 
         Queue<PuzzleStateNode> solutionSequence;
+        long startTime = System.nanoTime();
         if (strategy.equals("hill")) solutionSequence = HillClimbingStrategy.findSequence(root, 200);
         else solutionSequence = AStarStrategy.findSequence(root);
+        long endTime = System.nanoTime();
+
+        long totalTime = (endTime - startTime) / 1000000;
+        System.out.println("Tiempo de finalización: " + (totalTime / 1000) + "s");
 
         if (solutionSequence.size() == 1) {
             writeFile("-\n" + root.getEvaluation());
@@ -45,6 +50,7 @@ public class Main {
             String sequence = "";
             while ((aux = solutionSequence.poll()) != null) {
                 sequence += aux.getPreviousMovement() + ",";
+                //System.out.println(aux);
             }
 
             System.out.println(sequence);

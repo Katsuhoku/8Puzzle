@@ -13,6 +13,8 @@ public class PuzzleRules {
 
     public static int maxMov = 200;
 
+    public static int maxDepth = 5;
+
     /**
      * Valor máximo de la suma de las distancias de Manhattan
      */
@@ -69,6 +71,17 @@ public class PuzzleRules {
     public static void prepare() {
         PuzzleRules.maxMisplaced = (int) Math.pow(boardSize, 2) - 1;
         PuzzleRules.maxMov = (boardSize - 1) * 100;
+        switch (PuzzleRules.boardSize) {
+            case 4:
+                maxDepth = 20;
+                break;
+            case 5:
+                maxDepth = 17;
+                break;
+            case 6:
+                maxDepth = 16;
+                break;
+        }
         setMaxManhattan();
         setMaxInversions();
         setMaxCommutes();
