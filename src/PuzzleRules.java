@@ -76,7 +76,7 @@ public class PuzzleRules {
                 maxDepth = 20;
                 break;
             case 5:
-                maxDepth = 17;
+                maxDepth = 10;
                 break;
             case 6:
                 maxDepth = 16;

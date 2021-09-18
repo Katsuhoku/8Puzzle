@@ -148,20 +148,6 @@ public class AStarStrategy {
             open.clear();
             closed.clear();
 
-            Stack<PuzzleStateNode> tempSequence = new Stack<>();
-
-            PuzzleStateNode aux = limit.get(0);
-            tempSequence.push(aux);
-            while ((aux = aux.getFather()) != null) {
-                if (aux.getFather() != null) tempSequence.push(aux);
-            }
-            try {
-                while (true) nodeSequence.offer(tempSequence.pop());
-            } catch (Exception e) {
-
-            }
-            
-
             open.add(limit.get(0));
             limit.clear();
             currentSubtree++;
