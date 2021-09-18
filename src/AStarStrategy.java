@@ -13,16 +13,8 @@ public class AStarStrategy {
         while (open.size() > 0) {
             PuzzleStateNode X = open.remove(0);
 
-            // System.out.println(X);
-            // System.out.println("X Level: " + X.getLevel());
-            // System.out.println("X Evaluation: " + X.getEvaluation());
-            // System.out.println("X Evaluation (h): " + (X.getEvaluation() - 0.5*X.g()));
-
             if (X.h() == 0) return X;
             else if (X.getLevel() == PuzzleRules.maxDepth * currentSubtree) {
-                // System.out.println(X);
-                // System.out.println("X Level: " + X.getLevel());
-                // System.out.println("X Evaluation: " + X.getEvaluation());
                 // Insertion Sort
                 for (int i = 0; i < limit.size(); i++) {
                     if (X.getEvaluation() <= limit.get(i).getEvaluation()) {
@@ -35,17 +27,12 @@ public class AStarStrategy {
             else {
                 PuzzleStateNode[] children = X.genAllChildren();
                 for (PuzzleStateNode child : children) {
-                    // System.out.println(child);
-                    // System.out.println("Child Evaluation: " + child.getEvaluation());
-                    // System.out.println("Child Evaluation (Heuristic): " + (child.getEvaluation() - 0.5*child.g()));
-
                     boolean found = false;
                     PuzzleStateNode replace = null;
 
                     // check existence in open
                     for (PuzzleStateNode openNode : open) {
                         if (child.equals(openNode)) {
-                            // System.out.println("Equals open node");
                             found = true;
                             if (child.getEvaluation() < openNode.getEvaluation()) replace = openNode;
                             break;
@@ -56,7 +43,6 @@ public class AStarStrategy {
                         // node not found in open, check existence in closed
                         for (PuzzleStateNode closedNode : closed) {
                             if (child.equals(closedNode)) {
-                                // System.out.println("Equals closed node:\t" + closedNode);
                                 found = true;
                                 if (child.getEvaluation() < closedNode.getEvaluation()) replace = closedNode;
                                 break;
@@ -67,7 +53,6 @@ public class AStarStrategy {
                             // node not found in open nor closed, check existence in limit
                             for (PuzzleStateNode limitNode : limit) {
                                 if (child.equals(limitNode)) {
-                                    // System.out.println("Equals limit node");
                                     found = true;
                                     if (child.getEvaluation() < limitNode.getEvaluation()) replace = limitNode;
                                     break;
