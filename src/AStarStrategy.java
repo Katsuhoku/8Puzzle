@@ -7,9 +7,10 @@ import java.util.Queue;
 import java.util.Stack;
 
 public class AStarStrategy {
-    public static int currentSubtree = 1;
+    public int currentSubtree = 1;
 
-    private static PuzzleStateNode expand(ArrayList<PuzzleStateNode> open, ArrayList<PuzzleStateNode> closed, ArrayList<PuzzleStateNode> limit) {
+    private PuzzleStateNode expand(ArrayList<PuzzleStateNode> open, ArrayList<PuzzleStateNode> closed, ArrayList<PuzzleStateNode> limit) {
+        //Tester.printNodeInfo(open.get(0));
         while (open.size() > 0) {
             PuzzleStateNode X = open.remove(0);
 
@@ -103,7 +104,7 @@ public class AStarStrategy {
         return null;
     }
 
-    public static PuzzleStateNode exploreSubtree(PuzzleStateNode root) {
+    public PuzzleStateNode exploreSubtree(PuzzleStateNode root) {
         PuzzleStateNode solution = null;
 
         ArrayList<PuzzleStateNode> open = new ArrayList<>();
@@ -116,10 +117,10 @@ public class AStarStrategy {
         // La expansión finalizará si se encuentra la solución o si ya no existen
         // nodos en el límite y no es posible expandir más
         while (true) {
-            System.out.println("Subárbol: " + currentSubtree);
-
+            
             solution = expand(open, closed, limit);
-
+            
+            System.out.println("Subárbol: " + currentSubtree);
             System.out.println("Open\tClosed\tLimit");
             System.out.println(open.size() + "\t" + closed.size() + "\t" + limit.size());
 
@@ -146,32 +147,21 @@ public class AStarStrategy {
             for (PuzzleStateNode grandchild : grandchildren) if (!grandchild.equals(root)) toExpand.add(grandchild);
         }
 
-        SolutionResource solutionResource = new SolutionResource();
-        ArrayList<Thread> searchThreads = new ArrayList<>();
+        ArrayList<AStarAgent> searchThreads = new ArrayList<>();
+        SolutionResource solutionResource = new SolutionResource(searchThreads);
         for (PuzzleStateNode subroot : toExpand) {
-            Tester.printNodeInfo(subroot);
-            searchThreads.add(new Thread(){
-                // Búsqueda en un subárbol, ejecución paralela
-                public void run() {
-                    PuzzleStateNode solution = exploreSubtree(subroot);
-                    if (solution != null) {
-                        try {
-                            solutionResource.claimSolution(solution, searchThreads);
-                        } catch (InterruptedException ie) {
-
-                        }
-                    }
-                }
-            });
+            //Tester.printNodeInfo(subroot);
+            searchThreads.add(new AStarAgent(subroot, solutionResource));
         }
 
-        for (Thread thread : searchThreads) thread.start();
-        for (Thread thread : searchThreads) {
+        for (AStarAgent thread : searchThreads) thread.start();
+        for (AStarAgent thread : searchThreads) {
             try {
                 thread.join();
             } catch (InterruptedException ie) {
                 // El hilo fue interrumpido. El hilo interruptor ha encontrado
                 // la solución y no se requiere seguir explorando
+                System.out.println("Thread #" +thread.getID() + ": Searching but interrupted");
                 return nodeSequence;
             }
         }

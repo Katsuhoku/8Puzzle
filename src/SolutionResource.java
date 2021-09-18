@@ -11,9 +11,11 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SolutionResource {
     private PuzzleStateNode solution = null;
     private final Lock lock;
+    private ArrayList<AStarAgent> syncThreads;
 
-    public SolutionResource() {
+    public SolutionResource(ArrayList<AStarAgent> syncThreads) {
         lock = new ReentrantLock();
+        this.syncThreads = syncThreads;
     }
 
     /**
@@ -27,11 +29,11 @@ public class SolutionResource {
      * @throws InterruptedException Si el hilo fue el primero en proclamar su solución
      * será interrumpido en la espera por el recurso.
      */
-    public void claimSolution(PuzzleStateNode solution, ArrayList<Thread> threads) throws InterruptedException {
+    public void claimSolution(PuzzleStateNode solution) throws InterruptedException {
         lock.lockInterruptibly();
         try {
             this.solution = solution;
-            for (Thread thread : threads) thread.interrupt();
+            for (Thread thread : syncThreads) thread.stop();
         } finally {
             lock.unlock();
         }
