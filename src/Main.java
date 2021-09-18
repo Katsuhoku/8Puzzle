@@ -42,22 +42,17 @@ public class Main {
         long totalTime = (endTime - startTime) / 1000000;
         System.out.println("Tiempo de finalización: " + (totalTime / 1000) + "s");
 
-        if (solutionSequence.size() == 1) {
-            writeFile("-\n" + root.getEvaluation());
+        PuzzleStateNode aux = null;
+        String sequence = "";
+        while ((aux = solutionSequence.poll()) != null) {
+            sequence += aux.getPreviousMovement() + ",";
+            //System.out.println(aux);
         }
-        else {
-            PuzzleStateNode aux = null;
-            String sequence = "";
-            while ((aux = solutionSequence.poll()) != null) {
-                sequence += aux.getPreviousMovement() + ",";
-                //System.out.println(aux);
-            }
 
-            System.out.println(sequence);
-            
-            if (strategy.equals("hill")) sequence += "\n" + HillClimbingStrategy.bestEvaluation;
-            writeFile(sequence);
-        }
+        System.out.println(sequence);
+        
+        if (strategy.equals("hill")) sequence += "\n" + HillClimbingStrategy.bestEvaluation;
+        writeFile(sequence);
     }
 
     private static PuzzleStateNode readFile() throws Exception {

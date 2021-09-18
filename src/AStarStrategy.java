@@ -1,29 +1,21 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
 public class AStarStrategy {
-
     public static int currentSubtree = 1;
 
     private static PuzzleStateNode expand(ArrayList<PuzzleStateNode> open, ArrayList<PuzzleStateNode> closed, ArrayList<PuzzleStateNode> limit) {
         while (open.size() > 0) {
             PuzzleStateNode X = open.remove(0);
 
-            // System.out.println(X);
-            // System.out.println("X Level: " + X.getLevel());
-            // System.out.println("X Evaluation: " + X.getEvaluation());
-            // System.out.println("X Evaluation (h): " + (X.getEvaluation() - 0.5*X.g()));
-
-            if (X.h() == 0) return X;
+            if (X.h() == 0) return X; // El nodo es la solución
             else if (X.getLevel() == PuzzleRules.maxDepth * currentSubtree) {
-                // System.out.println(X);
-                // System.out.println("X Level: " + X.getLevel());
-                // System.out.println("X Evaluation: " + X.getEvaluation());
-                // Insertion Sort
+                // Nodo en el límite, no se puede expandir más
                 for (int i = 0; i < limit.size(); i++) {
                     if (X.getEvaluation() <= limit.get(i).getEvaluation()) {
                         limit.add(i, X);
@@ -35,17 +27,12 @@ public class AStarStrategy {
             else {
                 PuzzleStateNode[] children = X.genAllChildren();
                 for (PuzzleStateNode child : children) {
-                    // System.out.println(child);
-                    // System.out.println("Child Evaluation: " + child.getEvaluation());
-                    // System.out.println("Child Evaluation (Heuristic): " + (child.getEvaluation() - 0.5*child.g()));
-
                     boolean found = false;
                     PuzzleStateNode replace = null;
 
-                    // check existence in open
+                    // Verifica la existencia del nodo en open
                     for (PuzzleStateNode openNode : open) {
                         if (child.equals(openNode)) {
-                            // System.out.println("Equals open node");
                             found = true;
                             if (child.getEvaluation() < openNode.getEvaluation()) replace = openNode;
                             break;
@@ -53,10 +40,9 @@ public class AStarStrategy {
                     }
 
                     if (!found) {
-                        // node not found in open, check existence in closed
+                        // Verifica la existencia del nodo en closed
                         for (PuzzleStateNode closedNode : closed) {
                             if (child.equals(closedNode)) {
-                                // System.out.println("Equals closed node:\t" + closedNode);
                                 found = true;
                                 if (child.getEvaluation() < closedNode.getEvaluation()) replace = closedNode;
                                 break;
@@ -64,26 +50,24 @@ public class AStarStrategy {
                         }
 
                         if (!found) {
-                            // node not found in open nor closed, check existence in limit
+                            // Verifica la existencia del nodo en limit
                             for (PuzzleStateNode limitNode : limit) {
                                 if (child.equals(limitNode)) {
-                                    // System.out.println("Equals limit node");
                                     found = true;
                                     if (child.getEvaluation() < limitNode.getEvaluation()) replace = limitNode;
                                     break;
                                 }
                             }
                             if (replace != null) {
-                                // Node exists in limit, but has better evaluation
+                                // El nodo es un duplicado de otro en el límite, pero tiene mejor evaluación
                                 limit.remove(replace);
                                 if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
                             }
                         } else if (replace != null) {
-                            // Node exists in closed, but has better evaluation
-                            // Remove node from closed and from father's children
+                            // El nodo es un duplicado de otro en closed, pero tiene mejor evaluación
                             if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
 
-                            // Delete children
+                            // Se elimina todo el subárbol generado por este nodo
                             ArrayList<PuzzleStateNode> toRemove = deleteChildren(replace);
                             closed.removeAll(toRemove);
                             open.removeAll(toRemove);
@@ -92,15 +76,12 @@ public class AStarStrategy {
                             toRemove.clear();
                         }
                     } else if (replace != null) {
-                        // Node exists already in open, but has better evaluation
-                        // Remove node from open and from father's children
+                        // El nodo es un duplicado de otro en open, pero tiene mejor evaluación
                         open.remove(replace);
                         if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
                     }
 
-                    // append to open
-                    // Insertion sort (priority to new nodes)
-                    // Insertion only if state wasn't found, or was found but has better evaluation
+                    // Se agrega el nodo hijo a open si no fue encontrado o si tomó el lugar de otro nodo
                     if (!found || replace != null) {
                         for (int i = 0; i < open.size(); i++) {
                             if (child.getEvaluation() <= open.get(i).getEvaluation()) {
@@ -122,8 +103,7 @@ public class AStarStrategy {
         return null;
     }
 
-    public static Queue<PuzzleStateNode> findSequence(PuzzleStateNode root) {
-        Queue<PuzzleStateNode> nodeSequence = new LinkedList<>();
+    public static PuzzleStateNode exploreSubtree(PuzzleStateNode root) {
         PuzzleStateNode solution = null;
 
         ArrayList<PuzzleStateNode> open = new ArrayList<>();
@@ -134,7 +114,7 @@ public class AStarStrategy {
 
         // Expande subárboles de maxDepth de profundiad tanto como sea necesario
         // La expansión finalizará si se encuentra la solución o si ya no existen
-        // nodos en el límite y no es posible expandir más.
+        // nodos en el límite y no es posible expandir más
         while (true) {
             System.out.println("Subárbol: " + currentSubtree);
 
@@ -148,39 +128,67 @@ public class AStarStrategy {
             open.clear();
             closed.clear();
 
-            Stack<PuzzleStateNode> tempSequence = new Stack<>();
-
-            PuzzleStateNode aux = limit.get(0);
-            tempSequence.push(aux);
-            while ((aux = aux.getFather()) != null) {
-                if (aux.getFather() != null) tempSequence.push(aux);
-            }
-            try {
-                while (true) nodeSequence.offer(tempSequence.pop());
-            } catch (Exception e) {
-
-            }
-            
-
             open.add(limit.get(0));
             limit.clear();
             currentSubtree++;
         }
 
-        if (solution != null) {
-            Stack<PuzzleStateNode> tempSequence = new Stack<>();
+        return solution;
+    }
 
-            PuzzleStateNode aux = solution;
-            tempSequence.push(aux);
-            while ((aux = aux.getFather()) != null) {
-                if (aux.getFather() != null) tempSequence.push(aux);
-            }
+    public static Queue<PuzzleStateNode> findSequence(PuzzleStateNode root) {
+        Queue<PuzzleStateNode> nodeSequence = new LinkedList<>();
+
+        ArrayList<PuzzleStateNode> toExpand = new ArrayList<>();
+        PuzzleStateNode[] children = root.genAllChildren();
+        for (PuzzleStateNode child : children) {
+            PuzzleStateNode[] grandchildren = child.genAllChildren();
+            for (PuzzleStateNode grandchild : grandchildren) if (!grandchild.equals(root)) toExpand.add(grandchild);
+        }
+
+        SolutionResource solutionResource = new SolutionResource();
+        ArrayList<Thread> searchThreads = new ArrayList<>();
+        for (PuzzleStateNode subroot : toExpand) {
+            Tester.printNodeInfo(subroot);
+            searchThreads.add(new Thread(){
+                // Búsqueda en un subárbol, ejecución paralela
+                public void run() {
+                    PuzzleStateNode solution = exploreSubtree(subroot);
+                    if (solution != null) {
+                        try {
+                            solutionResource.claimSolution(solution, searchThreads);
+                        } catch (InterruptedException ie) {
+
+                        }
+                    }
+                }
+            });
+        }
+
+        for (Thread thread : searchThreads) thread.start();
+        for (Thread thread : searchThreads) {
             try {
-                while (true) nodeSequence.offer(tempSequence.pop());
-            } catch (Exception e) {
-                
+                thread.join();
+            } catch (InterruptedException ie) {
+                // El hilo fue interrumpido. El hilo interruptor ha encontrado
+                // la solución y no se requiere seguir explorando
+                return nodeSequence;
             }
         }
+
+        Stack<PuzzleStateNode> stackSequence = new Stack<>();
+        PuzzleStateNode aux = solutionResource.getSolution();
+        stackSequence.push(aux);
+        while ((aux = aux.getFather()) != null) {
+            if (aux.getFather() != null) stackSequence.push(aux);
+        }
+
+        try {
+            while (true) nodeSequence.offer(stackSequence.pop());
+        } catch (EmptyStackException ese) {
+
+        }
+
         return nodeSequence;
     }
 
