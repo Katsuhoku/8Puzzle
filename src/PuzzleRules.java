@@ -78,6 +78,7 @@ public class PuzzleRules {
         PuzzleRules.maxMisplaced = (int) Math.pow(boardSize, 2) - 1;
         PuzzleRules.maxMov = (boardSize - 1) * 100;
         maxDepth = (int) (Math.log(1 + ((branch[boardSize - 3] - 1) * mem/nodeSize[boardSize - 3])) / Math.log(branch[boardSize - 3]));
+        maxDepth = 12;
         setMaxManhattan();
         setMaxInversions();
         setMaxCommutes();
