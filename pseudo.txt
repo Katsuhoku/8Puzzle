@@ -1,9 +1,31 @@
+// A* para resolver el problema del N-puzzle
+// Modelo: Horizonte limitado con restricción de nodos en el límite
+// Se limita la cantidad de nodos a guardar en el vector del límite con base
+// en la evaluación de la raíz del subárbol explorado
+// Cuando la raíz del subárbol esté lejos de la solución (es decir, sea cercana a 1)
+// la cantidad de nodos en el límite será menor, acelerando la búsqueda
+// por profundidad
+// Cuando la raíz del subárbol esté cerca de la solución (es decir, sea cercana a 0)
+// la cantidad e nodos en el límite será mayor, acelerando la búsqueda por
+// anchura
+
+// Cálculo del tamaño máximo de limit
+// Sean:
+// FRP - Factor de Ramificación Promedio para el tamaño de tablero
+// HL - Nivel máximo del horizonte limitado
+// TN - Árboles necesarios para llegar a la solución (según los promedios reales
+// mundiales de movimientos necesarios para llegar desde un estado válido a su meta,
+// para cada tamaño de tablero)
+// Er - Evaluación heurística de la raíz r del subárbol de búsqueda
+// El valor de la restricción se calcula como:
+// FRP^HL / FRP^(TN*Er)
+
 begin a*_for_npuzzle
     Root <- initial state readed from file
 
     open <- [Root] // tree leaves
     closed <- [] // already expanded nodes
-    limit <- [] // nodes in the deepest limit level
+    limit <- [] // nodes in the deepest limit level, max size relative to Root
 
     while true do
         while open <> [] do
@@ -14,6 +36,7 @@ begin a*_for_npuzzle
             else
                 if X is in the depth limit level then
                     add X to limit // insertion sort
+                    if limit is full then break // breaks the search in this subtree, in order to get a new root an continue from there
                 else
                     children <- children of X
                     for each child in children do
@@ -51,6 +74,7 @@ begin a*_for_npuzzle
             newRoot <- board with best evaluation from limit
             open <- [newRoot]
             closed <- []
+            limit <- [] // size relative to newRoot
         else
             break;
         end if

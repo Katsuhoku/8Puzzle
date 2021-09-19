@@ -297,16 +297,16 @@ public class PuzzleStateNode {
      */
     public double h() {
         return
-            1.0 * this.manhattan() +
-            0.0 * this.misplacedTiles() +
-            0.0 * this.permutationInversions() +
+            0.5 * this.manhattan() +
+            0.3 * this.misplacedTiles() +
+            0.2 * this.permutationInversions() +
             0.0 * this.commutedColumns() +
             0.0 * this.commutedRows()
         ;
     }
 
     public double g() {
-        return (double) level / 200.0;
+        return (double) level / PuzzleRules.maxMov;
     }
 
     private double evaluate() {

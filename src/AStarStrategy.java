@@ -10,6 +10,9 @@ public class AStarStrategy {
     public int currentSubtree = 1;
 
     private PuzzleStateNode expand(ArrayList<PuzzleStateNode> open, ArrayList<PuzzleStateNode> closed, ArrayList<PuzzleStateNode> limit) {
+        int restriction = (int) (Math.pow(PuzzleRules.branch[PuzzleRules.boardSize - 3], PuzzleRules.maxDepth - PuzzleRules.treesNeeded[PuzzleRules.boardSize - 3] * open.get(0).h()));
+        System.out.println("Subroot evaluation: " + open.get(0).h());
+        System.out.println("Restricción: " + restriction);
         //Tester.printNodeInfo(open.get(0));
         while (open.size() > 0) {
             PuzzleStateNode X = open.remove(0);
@@ -23,7 +26,12 @@ public class AStarStrategy {
                         break;
                     }
                 }
-                if (!limit.contains(X)) limit.add(X);
+                if (!limit.contains(X)) {
+                    limit.add(X);
+                    System.out.println("[Update] Limit size: " + limit.size());
+                }
+
+                if (limit.size() == restriction) break;
             }
             else {
                 PuzzleStateNode[] children = X.genAllChildren();
