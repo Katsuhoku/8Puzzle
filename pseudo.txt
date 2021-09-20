@@ -3,58 +3,39 @@ begin a*_for_npuzzle
 
     open <- [Root] // tree leaves
     closed <- [] // already expanded nodes
-    limit <- [] // nodes in the deepest limit level
 
     while true do
         while open <> [] do
             X <- board with best evaluation from open
 
             if X is the goal state
-                return path from Start to X
+                return path from Root to X
+            else if X is in the deepest limit level then
+                open <- [X]
+                closed <- []
             else
-                if X is in the deepest limit level then
-                    add X to limit // insertion sort
-                else
-                    children <- children of X
-                    for each child in children do
-                        // get the resource.)
-                        if child was already in open then
-                            if this is a shorter path to the child then // (i.e. is a better evaluation)
-                                update child evaluation
-                                update child father node as X
-                            end if
-                        else if child was already in closed then
-                            if this is a shorter path to the child
-                                move child node from close to open
-                                delete the subtree that child had
-                                update child father node as X
-                            end if
-                        else if child was already in limit then
-                            if this is a shorter path to the child
-                                move child node from limit to open
-                                update child evaluation
-                                update chid father node as X
-                            end if
-                        else // the child is not in open nor in closed nor in limit
-                            evaluate child
-                            add child to open at its corresponding place // insertion sort
+                children <- children of X
+                for each child in children do
+                    // get the resource.)
+                    if child was already in open then
+                        if this is a shorter path to the child then // (i.e. is a better evaluation)
+                            update child evaluation
+                            update child father node as X
                         end if
-                    
-                    add X to closed
-                end if
+                    else if child was already in closed then
+                        if this is a shorter path to the child
+                            move child node from close to open
+                            delete the subtree that child had
+                            update child father node as X
+                        end if
+                    else // the child is not in open nor in closed nor in limit
+                        evaluate child
+                        add child to open at its corresponding place // insertion sort
+                    end if
+                
+                add X to closed
             end if
         end while
-
-        // at some point, every leaf in the tree will be a limit node
-        // then open gets empty and the algorithm starts again giving
-        // the best node in limit as the new root
-        if limit <> [] then
-            newRoot <- board with best evaluation from limit
-            open <- [newRoot]
-            closed <- []
-        else
-            break;
-        end if
     end while
 
     // if the solution couldn't be found and there's no more tree to

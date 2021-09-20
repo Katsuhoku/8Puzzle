@@ -9,21 +9,11 @@ public class AStarStrategy {
 
     public static int currentSubtree = 1;
 
-    private static PuzzleStateNode expand(ArrayList<PuzzleStateNode> open, ArrayList<PuzzleStateNode> closed, ArrayList<PuzzleStateNode> limit) {
+    private static PuzzleStateNode expand(ArrayList<PuzzleStateNode> open, ArrayList<PuzzleStateNode> closed) {
         while (open.size() > 0) {
             PuzzleStateNode X = open.remove(0);
 
-            if (X.h() == 0) return X;
-            else if (X.getLevel() == PuzzleRules.maxDepth * currentSubtree) {
-                // Insertion Sort
-                for (int i = 0; i < limit.size(); i++) {
-                    if (X.getEvaluation() <= limit.get(i).getEvaluation()) {
-                        limit.add(i, X);
-                        break;
-                    }
-                }
-                if (!limit.contains(X)) limit.add(X);
-            }
+            if (X.h() == 0 || X.getLevel() == PuzzleRules.maxDepth * currentSubtree) return X;
             else {
                 PuzzleStateNode[] children = X.genAllChildren();
                 for (PuzzleStateNode child : children) {
@@ -49,21 +39,7 @@ public class AStarStrategy {
                             }
                         }
 
-                        if (!found) {
-                            // node not found in open nor closed, check existence in limit
-                            for (PuzzleStateNode limitNode : limit) {
-                                if (child.equals(limitNode)) {
-                                    found = true;
-                                    if (child.getEvaluation() < limitNode.getEvaluation()) replace = limitNode;
-                                    break;
-                                }
-                            }
-                            if (replace != null) {
-                                // Node exists in limit, but has better evaluation
-                                limit.remove(replace);
-                                if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
-                            }
-                        } else if (replace != null) {
+                        if (replace != null) {
                             // Node exists in closed, but has better evaluation
                             // Remove node from closed and from father's children
                             if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
@@ -72,7 +48,6 @@ public class AStarStrategy {
                             ArrayList<PuzzleStateNode> toRemove = deleteChildren(replace);
                             closed.removeAll(toRemove);
                             open.removeAll(toRemove);
-                            limit.removeAll(toRemove);
 
                             toRemove.clear();
                         }
@@ -113,7 +88,6 @@ public class AStarStrategy {
 
         ArrayList<PuzzleStateNode> open = new ArrayList<>();
         ArrayList<PuzzleStateNode> closed = new ArrayList<>();
-        ArrayList<PuzzleStateNode> limit = new ArrayList<>();
 
         open.add(root);
 
@@ -123,18 +97,17 @@ public class AStarStrategy {
         while (true) {
             System.out.println("Subárbol: " + currentSubtree);
 
-            solution = expand(open, closed, limit);
+            solution = expand(open, closed);
 
-            System.out.println("Open\tClosed\tLimit");
-            System.out.println(open.size() + "\t" + closed.size() + "\t" + limit.size());
+            System.out.println("Open\tClosed");
+            System.out.println(open.size() + "\t" + closed.size());
 
-            if (solution != null || limit.size() == 0) break;
+            if (solution.h() == 0.0) break;
             
             open.clear();
             closed.clear();
-
-            open.add(limit.get(0));
-            limit.clear();
+            open.add(solution);
+            
             currentSubtree++;
         }
 

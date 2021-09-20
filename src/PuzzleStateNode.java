@@ -306,11 +306,12 @@ public class PuzzleStateNode {
     }
 
     public double g() {
-        return (double) level / 200.0;
+        return (double) level / PuzzleRules.maxMov;
     }
 
     private double evaluate() {
-        return 0.5 * g() + 0.5 * h();
+        if (h() > 0.15) return 0.6 * g() + 0.4 * h();
+        else return 0.7 * g() + 0.3 * h();
     }
 
 

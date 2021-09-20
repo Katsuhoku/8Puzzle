@@ -28,7 +28,7 @@ public class Main {
 
             long totalTime = (endTime - startTime) / 1000000;
 
-            System.out.println("Tiempo de finalización: " + (totalTime / 1000) + "s");
+            System.out.println("Tiempo de finalización: " + totalTime + "ms");
             System.exit(0);
         }
 
@@ -40,7 +40,7 @@ public class Main {
         long endTime = System.nanoTime();
 
         long totalTime = (endTime - startTime) / 1000000;
-        System.out.println("Tiempo de finalización: " + (totalTime / 1000) + "s");
+        System.out.println("Tiempo de finalización: " + totalTime + "ms");
 
         if (solutionSequence.size() == 1) {
             writeFile("-\n" + root.getEvaluation());
