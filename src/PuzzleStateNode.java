@@ -310,8 +310,7 @@ public class PuzzleStateNode {
     }
 
     private double evaluate() {
-        if (h() > 0.15) return 0.6 * g() + 0.4 * h();
-        else return 0.7 * g() + 0.3 * h();
+        return 2 * g() + 2 * Math.pow(h(), 2);
     }
 
 
