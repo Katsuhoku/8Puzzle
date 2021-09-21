@@ -16,23 +16,22 @@ begin a*_for_npuzzle
             else
                 children <- children of X
                 for each child in children do
-                    // get the resource.)
-                    if child was already in open then
-                        if this is a shorter path to the child then // (i.e. is a better evaluation)
-                            update child evaluation
-                            update child father node as X
+                    if child is not in the partial path then
+                        if child was already in open then
+                            if this is a shorter path to the child then // (i.e. is a better evaluation)
+                                update child evaluation
+                                update child father node as X
+                            end if
+                        else if child was already in closed then
+                            if this is a shorter path to the child
+                                move child node from close to open
+                                delete the subtree that child had
+                                update child father node as X
+                            end if
+                        else // the child is not in open nor in closed nor in limit
+                            evaluate child
+                            add child to open at its corresponding place // insertion sort
                         end if
-                    else if child was already in closed then
-                        if this is a shorter path to the child
-                            move child node from close to open
-                            delete the subtree that child had
-                            update child father node as X
-                        end if
-                    else // the child is not in open nor in closed nor in limit
-                        evaluate child
-                        add child to open at its corresponding place // insertion sort
-                    end if
-                
                 add X to closed
             end if
         end while

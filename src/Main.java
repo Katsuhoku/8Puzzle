@@ -32,6 +32,7 @@ public class Main {
             System.exit(0);
         }
 
+        System.out.println("Tablero: " + filename);
 
         Queue<PuzzleStateNode> solutionSequence;
         long startTime = System.nanoTime();
@@ -41,6 +42,7 @@ public class Main {
 
         long totalTime = (endTime - startTime) / 1000000;
         System.out.println("Tiempo de finalización: " + totalTime + "ms");
+        System.out.println("Movimientos requeridos: " + solutionSequence.size());
 
         if (solutionSequence.size() == 1) {
             writeFile("-\n" + root.getEvaluation());

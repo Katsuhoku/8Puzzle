@@ -297,9 +297,9 @@ public class PuzzleStateNode {
      */
     public double h() {
         return
-            0.5 * this.manhattan() +
-            0.3 * this.misplacedTiles() +
-            0.2 * this.permutationInversions() +
+            0.8 * this.manhattan() +
+            0.2 * this.misplacedTiles() +
+            0.0 * this.permutationInversions() +
             0.0 * this.commutedColumns() +
             0.0 * this.commutedRows()
         ;
@@ -310,7 +310,8 @@ public class PuzzleStateNode {
     }
 
     private double evaluate() {
-        return 2 * g() + 2 * Math.pow(h(), 2);
+        if (h() > 0.2) return 2 * g() + 2 * Math.pow(h(), 2);
+        else return (0.7 * g() + 0.3 * h());
     }
 
 

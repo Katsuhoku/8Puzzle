@@ -20,56 +20,66 @@ public class AStarStrategy {
                     boolean found = false;
                     PuzzleStateNode replace = null;
 
-                    // check existence in open
-                    for (PuzzleStateNode openNode : open) {
-                        if (child.equals(openNode)) {
+                    PuzzleStateNode parentAux = child;
+                    while ((parentAux = parentAux.getFather()) != null) {
+                        if (child.equals(parentAux)) {
                             found = true;
-                            if (child.getEvaluation() < openNode.getEvaluation()) replace = openNode;
                             break;
                         }
                     }
 
                     if (!found) {
-                        // node not found in open, check existence in closed
-                        for (PuzzleStateNode closedNode : closed) {
-                            if (child.equals(closedNode)) {
+                        // check existence in open
+                        for (PuzzleStateNode openNode : open) {
+                            if (child.equals(openNode)) {
                                 found = true;
-                                if (child.getEvaluation() < closedNode.getEvaluation()) replace = closedNode;
+                                if (child.getEvaluation() < openNode.getEvaluation()) replace = openNode;
                                 break;
                             }
                         }
 
-                        if (replace != null) {
-                            // Node exists in closed, but has better evaluation
-                            // Remove node from closed and from father's children
+                        if (!found) {
+                            // node not found in open, check existence in closed
+                            for (PuzzleStateNode closedNode : closed) {
+                                if (child.equals(closedNode)) {
+                                    found = true;
+                                    if (child.getEvaluation() < closedNode.getEvaluation()) replace = closedNode;
+                                    break;
+                                }
+                            }
+
+                            if (replace != null) {
+                                // Node exists in closed, but has better evaluation
+                                // Remove node from closed and from father's children
+                                if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
+
+                                // Delete children
+                                ArrayList<PuzzleStateNode> toRemove = deleteChildren(replace);
+                                closed.removeAll(toRemove);
+                                open.removeAll(toRemove);
+
+                                toRemove.clear();
+                            }
+                        } else if (replace != null) {
+                            // Node exists already in open, but has better evaluation
+                            // Remove node from open and from father's children
+                            open.remove(replace);
                             if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
-
-                            // Delete children
-                            ArrayList<PuzzleStateNode> toRemove = deleteChildren(replace);
-                            closed.removeAll(toRemove);
-                            open.removeAll(toRemove);
-
-                            toRemove.clear();
                         }
-                    } else if (replace != null) {
-                        // Node exists already in open, but has better evaluation
-                        // Remove node from open and from father's children
-                        open.remove(replace);
-                        if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
-                    }
 
-                    // append to open
-                    // Insertion sort (priority to new nodes)
-                    // Insertion only if state wasn't found, or was found but has better evaluation
-                    if (!found || replace != null) {
-                        for (int i = 0; i < open.size(); i++) {
-                            if (child.getEvaluation() <= open.get(i).getEvaluation()) {
-                                open.add(i, child);
-                                break;
+                        // append to open
+                        // Insertion sort (priority to new nodes)
+                        // Insertion only if state wasn't found, or was found but has better evaluation
+                        if (!found || replace != null) {
+                            for (int i = 0; i < open.size(); i++) {
+                                if (child.getEvaluation() <= open.get(i).getEvaluation()) {
+                                    open.add(i, child);
+                                    break;
+                                }
                             }
+                            if (!open.contains(child)) open.add(child);
+                            X.addChild(child);
                         }
-                        if (!open.contains(child)) open.add(child);
-                        X.addChild(child);
                     }
                 }
                 open.remove(X);
@@ -107,7 +117,7 @@ public class AStarStrategy {
             open.clear();
             closed.clear();
             open.add(solution);
-            
+
             currentSubtree++;
         }
 
