@@ -106,6 +106,7 @@ public class AStarStrategy {
         // nodos en el límite y no es posible expandir más.
         while (true) {
             System.out.println("Subárbol: " + currentSubtree);
+            System.out.println("Raíz: " + open.get(0).h());
 
             solution = expand(open, closed);
 
