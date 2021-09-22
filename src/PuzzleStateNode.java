@@ -311,7 +311,7 @@ public class PuzzleStateNode {
 
     private double evaluate() {
         if (h() > 0.2) return 4 * g() + 2 * Math.pow(h(), 2);
-        else return (0.8 * g() + 0.2 * h());
+        else return (0.75 * g() + 0.25 * h());
     }
 
 

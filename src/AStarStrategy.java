@@ -85,6 +85,7 @@ public class AStarStrategy {
                 open.remove(X);
                 closed.add(X);
             }
+            else break;
         }
 
         // Si open se queda vacío significa que no encontró la solución
@@ -113,7 +114,7 @@ public class AStarStrategy {
             System.out.println("Open\tClosed");
             System.out.println(open.size() + "\t" + closed.size());
 
-            if (solution.h() == 0.0) break;
+            if (solution == null || solution.h() == 0.0) break;
             
             open.clear();
             closed.clear();

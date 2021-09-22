@@ -11,7 +11,7 @@ public class PuzzleRules {
      */
     public static int boardSize = 3;
 
-    public static int[] maxMov = {100, 160, 300, 550};
+    public static int[] maxMov = {100, 160, 300, 600};
 
     public static int maxDepth = 5;
 
