@@ -14,7 +14,7 @@ public class AStarStrategy {
             PuzzleStateNode X = open.remove(0);
 
             if (X.h() == 0 || X.getLevel() == PuzzleRules.maxDepth * currentSubtree) return X;
-            else {
+            else if (X.getLevel() <= PuzzleRules.maxMov[PuzzleRules.boardSize - 3]) {
                 PuzzleStateNode[] children = X.genAllChildren();
                 for (PuzzleStateNode child : children) {
                     boolean found = false;

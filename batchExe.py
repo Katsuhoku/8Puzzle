@@ -7,24 +7,25 @@ import seaborn as sb
 import matplotlib.pyplot as plt
 
 env = dict(os.environ)
-data = [[{} for j in range(100)] for i in range(3)]
+data = [[{} for j in range(160)] for i in range(3)]
 
 def run_test(size, i):
     start_time = time.time()
-    subprocess.run(['java', '-cp', '../class', 'src.Main', f'../{size}x{size}/input{i}.txt', f'../{size}x{size}/output{i}.txt'], env=env)
+    subprocess.run(['java', '-cp', 'class', 'src.Main', f'{size}x{size}/input{i}.txt', f'{size}x{size}/output{i}.txt', 'a*', '>', 'D:/log.txt'], env=env)
     exe_time = time.time() - start_time
 
-    with open(f'../{size}x{size}/output{i}.txt', 'r') as test:
+    with open(f'{size}x{size}/output{i}.txt', 'r') as test:
         seq = test.readline()[:-1]
         best = test.readline()
 
-    data[size - 3][i] = {
+    data[size - 4][i] = {
         'exe': exe_time,
         'best': best,
         'seq': seq
     }
 
-    with open(f'../{size}x{size}/input{i}.txt', 'r') as inf:
+    '''
+    with open(f'{size}x{size}/input{i}.txt', 'r') as inf:
         inf.readline()
         aux = []
         for _ in range(i):
@@ -41,21 +42,25 @@ def run_test(size, i):
     heat_map = sb.heatmap(aux, xticklabels=False, yticklabels=False, cmap='RdPu', annot=True, cbar=False)
     plt.savefig(f'../{size}x{size}/board{i}.png')
     plt.close()
+    '''
 
 def main():
     env['JAVA_OPTS'] = 'foo'
-    subprocess.run(['javac', '-encoding', 'utf-8', '-d', '../class/', '../src/*.java'], env=env)
+    subprocess.run(['javac', '-encoding', 'utf-8', '-d', 'class/', 'src/*.java'], env=env)
 
-    for i in range(3,6):
-        for j in range(100):
+    for i in range(4,7):
+        for j in range(160):
+            run_test(i,j)
+            '''
             x = threading.Thread(target=run_test, args=(i,j,))
             x.start()
+            '''
 
-        with open(f'../{i}x{i}/results.csv', 'w') as f:
-            for j in range(100):
-                exe_time = data[i][j]['exe']
-                best = data[i][j]['best']
-                seq = data[i][j]['seq']
+        with open(f'{i}x{i}/results.csv', 'w') as f:
+            for j in range(160):
+                exe_time = data[i-4][j]['exe']
+                best = data[i-4][j]['best']
+                seq = data[i-4][j]['seq']
 
                 f.write(f'{j},{exe_time},{best},\"{seq}\"\n')
 

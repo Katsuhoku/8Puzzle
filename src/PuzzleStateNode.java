@@ -306,7 +306,7 @@ public class PuzzleStateNode {
     }
 
     public double g() {
-        return (double) level / PuzzleRules.maxMov;
+        return (double) level / PuzzleRules.maxMov[PuzzleRules.boardSize - 3];
     }
 
     private double evaluate() {

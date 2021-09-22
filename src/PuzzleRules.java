@@ -11,7 +11,7 @@ public class PuzzleRules {
      */
     public static int boardSize = 3;
 
-    public static int maxMov = 200;
+    public static int[] maxMov = {100, 160, 300, 550};
 
     public static int maxDepth = 5;
 
@@ -76,7 +76,6 @@ public class PuzzleRules {
         double mem = 3.5 * Math.pow(1024, 3);
 
         PuzzleRules.maxMisplaced = (int) Math.pow(boardSize, 2) - 1;
-        PuzzleRules.maxMov = (boardSize - 1) * 100;
         maxDepth = (int) (Math.log(1 + ((branch[boardSize - 3] - 1) * mem/nodeSize[boardSize - 3])) / Math.log(branch[boardSize - 3]));
         setMaxManhattan();
         setMaxInversions();
