@@ -1,7 +1,7 @@
 begin a*_for_npuzzle
     Root <- initial state readed from file
 
-    open <- [Root] // tree leaves
+    open <- [Root] // leaf nodes
     closed <- [] // already expanded nodes
 
     while true do
