@@ -44,7 +44,7 @@ public class Main {
         System.out.println("Tiempo de finalización: " + totalTime + "ms");
         System.out.println("Movimientos requeridos: " + solutionSequence.size());
 
-        if (solutionSequence.size() == 1) {
+        if (solutionSequence.size() > 0 && solutionSequence.peek().getPreviousMovement() == PuzzleRules.START) {
             writeFile("-\n" + root.getEvaluation());
         }
         else {
