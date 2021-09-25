@@ -37,78 +37,13 @@ begin a*_for_npuzzle
         end while
     end while
 
-    // if the solution couldn't be found and there's no more tree to
-    // explore then its a fail
     return FAIL
 end a*_for_npuzzle
 
 begin evaluate
-    evaluation <- level of the node + 0.2 * manhattanDistance + 0.5 * misplacedTiles + 0.3 * permutationInversions
+    if component h > 0.2 then
+        evaluation <- 4 * tree level + 2 * (component h) ^ 2
+    else then
+        evaluation <- 0.8 * tree level + 0.2 * (component h)
     return evaluation
 end evaluate
-
-begin manhattanDistance
-    total <- 0
-    for each tile in the current state board do
-        row_distance <- vertical distance from the current row of the tile to the row of its position in solved state
-        column_distance <- horizontal distance from the current column of the tile to the column of its position in solved state
-
-        total <- row_distance + column_distance
-    end for
-
-    return total / maxManhattan
-end manhattanDistance
-
-begin misplacedTiles
-    total <- 0
-    for each tile in the current state board do
-        if the tile is not the blank space then
-            if the tile is not in its position in the solved state then
-                total <- total + 1
-            end if
-        end if
-    end for
-
-    return total / maxMisplaced
-end misplacedTiles
-
-begin permutationInversions
-    total <- 0
-    solvedPermutation <- solvedState matrix as a vector, every row is appended one by one in order
-    statePermutation <- currentState matrix as a vector, every row is appended one by one in order
-
-    // gets the mapped permutation
-    normalizedStatePermutation <- []
-    for i from 0 to boardSize ^ 2 increment 1 do
-        normalizedStatePermutation[i] <- index of solvedPermutation[i] in statePermutation
-    end for
-
-    for each element in normalizedStatePermutation do
-        total <- total + number of elements smaller than this element at his right part of the normalizedStatePermutation
-    end for
-
-    return total / maxInversions
-end permutationInversions
-
-begin generate_children
-    let (i, j) be the (row, column) pair of coordinates of the blank space in the current state board
-    current <- (i, j)
-    
-    movements <- [
-        right <- (i, j+1),
-        up <- (i-1, j),
-        left <- (i, j-1),
-        down <- (i+1, j)
-    ]
-
-    children <- []
-    for each movement in movements do
-        if the new coordinates of the blank space are in the boundaries of the board then
-            newState <- currentState
-            newState.switchTiles(current, movement)
-            add newState to children
-        end if
-    end for
-
-    return children
-end generate_children

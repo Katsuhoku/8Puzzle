@@ -32,7 +32,7 @@ public class Main {
             System.exit(0);
         }
 
-        System.out.println("Tablero: " + filename);
+        //System.out.println("Tablero: " + filename);
 
         Queue<PuzzleStateNode> solutionSequence;
         long startTime = System.nanoTime();
@@ -41,8 +41,8 @@ public class Main {
         long endTime = System.nanoTime();
 
         long totalTime = (endTime - startTime) / 1000000;
-        System.out.println("Tiempo de finalización: " + totalTime + "ms");
-        System.out.println("Movimientos requeridos: " + solutionSequence.size());
+        //System.out.println("Tiempo de finalización: " + totalTime + "ms");
+        //System.out.println("Movimientos requeridos: " + solutionSequence.size());
 
         if (solutionSequence.size() > 0 && solutionSequence.peek().getPreviousMovement() == PuzzleRules.START) {
             writeFile("-\n" + root.getEvaluation());
@@ -51,7 +51,8 @@ public class Main {
             PuzzleStateNode aux = null;
             String sequence = "";
             while ((aux = solutionSequence.poll()) != null) {
-                sequence += aux.getPreviousMovement() + ",";
+                sequence += aux.getPreviousMovement();
+                if (solutionSequence.peek() != null) sequence += ",";
                 //System.out.println(aux);
             }
 
