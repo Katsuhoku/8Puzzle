@@ -5,10 +5,30 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
+/**
+ * Estrategia de solución por el algoritmo A* para el problema del N-puzzle.
+ * La estrategia está diseñada para tableros de tamaño 4x4, 5x5 y 6x6.
+ */
+
 public class AStarStrategy {
 
+    /**
+     * Subárbol que se encuentra explorando el algoritmo A*
+     */
     public static int currentSubtree = 1;
 
+    /**
+     * Algoritmo A* para exploran un solo árbol. El algoritmo recibe como entrada los arreglos
+     * open y closed, donde open contiene únicamente la raíz del árbol y closed se encuentra vacío.
+     * El algoritmo corresponde al ciclo interno descrito en pseudocódigo, que realiza la expansión
+     * de los nodos obtenidos de open, hasta que llegue a la solución. El algoritmo excluye
+     * de la expansión aquellos nodos que se repiten en open, en closed o en la secuencia
+     * de movimientos (path) generada hasta el momento.
+     * @param open Arreglo open, incluyendo únicamente la raíz del (sub)árbol
+     * @param closed Arreglo closed, esencialmente una referencia a un arreglo vacío
+     * @return Un nodo PuzzleStateNode que es el estado meta si lo encuentra, o el mejor nodo en el
+     * horizonte limitado, o null en caso de vaciarse open y no llegar a ninguno de los casos anteriores.
+     */
     private static PuzzleStateNode expand(ArrayList<PuzzleStateNode> open, ArrayList<PuzzleStateNode> closed) {
         while (open.size() > 0) {
             PuzzleStateNode X = open.remove(0);
@@ -20,6 +40,7 @@ public class AStarStrategy {
                     boolean found = false;
                     PuzzleStateNode replace = null;
 
+                    // Verifica la existencia del nodo en la secuencia de movimientos hasta este nodo
                     PuzzleStateNode parentAux = child;
                     while ((parentAux = parentAux.getFather()) != null) {
                         if (child.equals(parentAux)) {
@@ -29,7 +50,7 @@ public class AStarStrategy {
                     }
 
                     if (!found) {
-                        // check existence in open
+                        // Verifica la existencia del nodo en open
                         for (PuzzleStateNode openNode : open) {
                             if (child.equals(openNode)) {
                                 found = true;
@@ -39,7 +60,7 @@ public class AStarStrategy {
                         }
 
                         if (!found) {
-                            // node not found in open, check existence in closed
+                            // El nodo no fue encontrado en open, se busca en closed
                             for (PuzzleStateNode closedNode : closed) {
                                 if (child.equals(closedNode)) {
                                     found = true;
@@ -49,11 +70,12 @@ public class AStarStrategy {
                             }
 
                             if (replace != null) {
-                                // Node exists in closed, but has better evaluation
-                                // Remove node from closed and from father's children
+                                // El nodo ya existía en closed, pero tiene una mejor evaluación
+                                // Se elimina el nodo de closed y de la lista de hijos del padre
                                 if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
+                                closed.remove(replace);
 
-                                // Delete children
+                                // Se eliminan los nodos hijos del nodo reemplazado
                                 ArrayList<PuzzleStateNode> toRemove = deleteChildren(replace);
                                 closed.removeAll(toRemove);
                                 open.removeAll(toRemove);
@@ -61,15 +83,14 @@ public class AStarStrategy {
                                 toRemove.clear();
                             }
                         } else if (replace != null) {
-                            // Node exists already in open, but has better evaluation
-                            // Remove node from open and from father's children
+                            // El nodo ya existía en open, pero tiene una mejor evaluación
+                            // Se elimina el nodo de open y de la lista de hijos del padre
                             open.remove(replace);
                             if (replace.getFather() != null) replace.getFather().getCurrentChildren().remove(replace);
                         }
 
-                        // append to open
-                        // Insertion sort (priority to new nodes)
-                        // Insertion only if state wasn't found, or was found but has better evaluation
+                        // El nodo no se encontró o se encontró pero tiene mejor evaluación
+                        // Se agrega el nodo a open por insersión (Insertion sort)
                         if (!found || replace != null) {
                             for (int i = 0; i < open.size(); i++) {
                                 if (child.getEvaluation() <= open.get(i).getEvaluation()) {
@@ -93,6 +114,17 @@ public class AStarStrategy {
         return null;
     }
 
+    /**
+     * Coordinador de las llamadas al algoritmo A* para cada subárbol que sea
+     * necesario para llegar a la solución. Esta función es llamada por el
+     * programa principal, y retorna una cola de nodos lista para extraer
+     * de ella la secuencia de movimientos.
+     * Realiza las llamadas al algoritmo de A*, y reestablece los arreglos
+     * open y closed según sea la respuesta de éste.
+     * @param root El estado inicial del problema, que será la raíz del primer subárbol
+     * @return Una cola de nodos PuzzleStateNode. La lista estará vacía si el
+     * algoritmo A* no logra llegar a la solución.
+     */
     public static Queue<PuzzleStateNode> findSequence(PuzzleStateNode root) {
         Queue<PuzzleStateNode> nodeSequence = new LinkedList<>();
         PuzzleStateNode solution = null;
@@ -140,6 +172,14 @@ public class AStarStrategy {
         return nodeSequence;
     }
 
+    /**
+     * Genera el conjunto de nodos derivados de una raíz que deberán ser eliminados
+     * de los arreglos open y closed. La búsqueda se hace de manera recursiva. Se
+     * excluye la raíz del conjunto resultante.
+     * @param root La raíz a partir de la cual se derivan los nodos a eliminar
+     * @return Un Arraylist de nodos PuzzleStateNode, con todos los nodos derivados
+     * de la raíz dada como argumento.
+     */
     private static ArrayList<PuzzleStateNode> deleteChildren(PuzzleStateNode root) {
         ArrayList<PuzzleStateNode> pool = new ArrayList<>();
 
@@ -148,6 +188,11 @@ public class AStarStrategy {
         return pool;
     }
 
+    /**
+     * Función recursiva para generar el arreglo de la función deleteChildren().
+     * @param root Raíz de la cual se derivan los nodos a eliminar
+     * @param pool El conjunto de nodos derivados de la raíz
+     */
     private static void deleteChildren (PuzzleStateNode root, ArrayList<PuzzleStateNode> pool) {
         if (root.getCurrentChildren() == null || root.getCurrentChildren().size() == 0) return;
 
