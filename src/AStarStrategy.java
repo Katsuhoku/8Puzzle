@@ -106,13 +106,13 @@ public class AStarStrategy {
         // La expansión finalizará si se encuentra la solución o si ya no existen
         // nodos en el límite y no es posible expandir más.
         while (true) {
-            System.out.println("Subárbol: " + currentSubtree);
-            System.out.println("Raíz: " + open.get(0).h());
+            //System.out.println("Subárbol: " + currentSubtree);
+            //System.out.println("Raíz: " + open.get(0).h());
 
             solution = expand(open, closed);
 
-            System.out.println("Open\tClosed");
-            System.out.println(open.size() + "\t" + closed.size());
+            //System.out.println("Open\tClosed");
+            //System.out.println(open.size() + "\t" + closed.size());
 
             if (solution == null || solution.h() == 0.0) break;
             

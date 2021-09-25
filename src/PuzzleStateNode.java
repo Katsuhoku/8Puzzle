@@ -80,17 +80,6 @@ public class PuzzleStateNode {
         this.currentChildren = new ArrayList<>();
     }
 
-    /**
-     * Construye el nodo con el constructor inicial y sobreescribe el movimiento
-     * generador con el movimiento en el argumento.
-     * @param state Estado del tablero como matriz
-     * @param movement Movimiento por el cual se generó el estado actual (ver PuzzleRules).
-     */
-    private PuzzleStateNode(int[][] state, char movement) {
-        this(state);
-        this.previousMovement = movement;
-    }
-
     private PuzzleStateNode(int[][] state, char movement, PuzzleStateNode father, int level) {
         this(state);
         this.previousMovement = movement;
